@@ -847,30 +847,48 @@
     });
   }
 
-  function loadSettings() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) {
-      applySettingsValues({
-        DEFAULT_SETTINGS,
-        languageMode: detectUserLanguage()
-      });
-      saveSettings();
-      return;
-    }
+function loadSettings() {
+  const saved = localStorage.getItem(STORAGE_KEY);
 
-    try {
-      const settings = JSON.parse(saved);
-      const values = settings && settings.version === SETTINGS_VERSION ? settings.values : settings;
+  // PRIMEIRO ACESSO
+  if (!saved) {
+    const initialValues = {
+      ...DEFAULT_SETTINGS,
+      languageMode: detectUserLanguage()
+    };
 
-      applySettingsValues({ 
-        ...DEFAULT_SETTINGS, 
-        languageMode: values?.languageMode || detectUserLanguage(),
-        ...values 
-      });
-    } catch {
-      localStorage.removeItem(STORAGE_KEY);
-    }
+    applySettingsValues(initialValues);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      version: SETTINGS_VERSION,
+      values: initialValues
+    }));
+
+    return;
   }
+
+  try {
+    const settings = JSON.parse(saved);
+
+    const values =
+      settings && settings.version === SETTINGS_VERSION
+        ? settings.values
+        : settings;
+
+    const mergedValues = {
+      ...DEFAULT_SETTINGS,
+      ...values,
+      languageMode: values?.languageMode || detectUserLanguage()
+    };
+
+    applySettingsValues(mergedValues);
+
+  } catch {
+    localStorage.removeItem(STORAGE_KEY);
+
+    // fallback seguro
+    applySettingsValues(DEFAULT_SETTINGS);
+  }
+}
 
   function saveSettings() {
     const values = {};
