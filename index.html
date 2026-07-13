@@ -1,1566 +1,1634 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>SquadTime</title>
-  <style>
-    :root {
-      --bg: #f4f4f5;
-      --card: #ffffff;
-      --text: #18181b;
-      --muted: #71717a;
-      --border: #d4d4d8;
-      --input-bg: #ffffff;
-      --error: #dc2626;
-      --error-bg: #fef2f2;
-      --button-bg: #18181b;
-      --button-text: #ffffff;
-      --button-hover: #27272a;
-      --flash: #22c55e;
-      --accent: #6366f1;
-      --accent-strong: #4f46e5;
-      --success: #16a34a;
-    }
+    <meta charset="UTF-8" />
+    <title>SquadTime</title>
+    <style>
+        :root {
+            --bg: #f4f4f5;
+            --card: #ffffff;
+            --text: #18181b;
+            --muted: #71717a;
+            --border: #d4d4d8;
+            --input-bg: #ffffff;
+            --error: #dc2626;
+            --error-bg: #fef2f2;
+            --button-bg: #18181b;
+            --button-text: #ffffff;
+            --button-hover: #27272a;
+            --flash: #22c55e;
+            --accent: #6366f1;
+            --accent-strong: #4f46e5;
+            --success: #16a34a;
+        }
 
-    body.dark {
-      --bg: #09090b;
-      --card: #18181b;
-      --text: #f4f4f5;
-      --muted: #a1a1aa;
-      --border: #3f3f46;
-      --input-bg: #27272a;
-      --error: #f87171;
-      --error-bg: #451a1a;
-      --button-bg: #f4f4f5;
-      --button-text: #18181b;
-      --button-hover: #e4e4e7;
-      --flash: #4ade80;
-      --accent: #818cf8;
-      --accent-strong: #a5b4fc;
-      --success: #4ade80;
-    }
+        body.dark {
+            --bg: #09090b;
+            --card: #18181b;
+            --text: #f4f4f5;
+            --muted: #a1a1aa;
+            --border: #3f3f46;
+            --input-bg: #27272a;
+            --error: #f87171;
+            --error-bg: #451a1a;
+            --button-bg: #f4f4f5;
+            --button-text: #18181b;
+            --button-hover: #e4e4e7;
+            --flash: #4ade80;
+            --accent: #818cf8;
+            --accent-strong: #a5b4fc;
+            --success: #4ade80;
+        }
 
-    body {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 24px;
-      background:
-        radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 36%, transparent), transparent 30%),
-        var(--bg);
-      color: var(--text);
-    }
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 24px;
+            background:
+                radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 36%, transparent), transparent 30%),
+                var(--bg);
+            color: var(--text);
+        }
 
-    a {
-      color: var(--text);
-    }
+        a {
+            color: var(--text);
+        }
 
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 24px;
-      max-width: 1600px;
-      margin: auto;
-    }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+            max-width: 1600px;
+            margin: auto;
+        }
 
-    .box {
-      background: var(--card);
-      padding: 20px;
-      margin: 20px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      box-shadow: 0 8px 24px #0002;
-    }
+        .box {
+            background: var(--card);
+            padding: 20px;
+            margin: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 24px #0002;
+        }
 
-    h1 {
-      margin: 0 0 4px;
-      font-size: 28px;
-    }
+        h1 {
+            margin: 0 0 4px;
+            font-size: 28px;
+        }
 
-    h3 {
-      margin-top: 0;
-    }
+        h3 {
+            margin-top: 0;
+        }
 
-    .subtitle {
-      color: var(--muted);
-      margin-bottom: 18px;
-    }
+        .subtitle {
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
 
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: bold;
-    }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
 
-    input,
-    textarea,
-    select {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px;
-      margin-top: 6px;
-      font-size: 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--input-bg);
-      color: var(--text);
-    }
+        input,
+        textarea,
+        select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin-top: 6px;
+            font-size: 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text);
+        }
 
-    textarea {
-      min-height: 220px;
-      resize: vertical;
-    }
+        textarea {
+            min-height: 220px;
+            resize: vertical;
+        }
 
-    button {
-      margin-top: 16px;
-      padding: 10px 14px;
-      cursor: pointer;
-      font-weight: bold;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--button-bg);
-      color: var(--button-text);
-    }
+        button {
+            margin-top: 16px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--button-bg);
+            color: var(--button-text);
+        }
 
-    button:hover {
-      background: var(--button-hover);
-    }
+        button:hover {
+            background: var(--button-hover);
+        }
 
-    .actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-top: 16px;
-    }
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 16px;
+        }
 
-    .actions button {
-      margin-top: 0;
-    }
+        .actions button {
+            margin-top: 0;
+        }
 
-    .app-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 24px;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 700;
-    }
+        .app-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 24px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
 
-    .app-status::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--success);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 14%, transparent);
-    }
+        .app-status::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--success);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 14%, transparent);
+        }
 
-    .app-status.busy::before {
-      background: var(--accent);
-      animation: pulseDot 800ms ease-in-out infinite;
-    }
+        .app-status.busy::before {
+            background: var(--accent);
+            animation: pulseDot 800ms ease-in-out infinite;
+        }
 
-    .app-status.error-state::before {
-      background: var(--error);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 14%, transparent);
-    }
+        .app-status.error-state::before {
+            background: var(--error);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 14%, transparent);
+        }
 
-    @keyframes pulseDot {
-      0%, 100% {
-        transform: scale(1);
-        opacity: 0.65;
-      }
-      50% {
-        transform: scale(1.45);
-        opacity: 1;
-      }
-    }
+        @keyframes pulseDot {
 
-    .grid-hours {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-top: 20px;
-      align-items: start;
-    }
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.65;
+            }
 
-    .config-row {
-      margin-bottom: 12px;
-    }
+            50% {
+                transform: scale(1.45);
+                opacity: 1;
+            }
+        }
 
-    .output-header {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 8px;
-    }
+        .grid-hours {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+            align-items: start;
+        }
 
-    .copy-btn {
-      width: 32px;
-      height: 32px;
-      padding: 6px;
-      margin-top: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      color: var(--text);
-    }
+        .config-row {
+            margin-bottom: 12px;
+        }
 
-    .copy-btn:hover {
-      background: var(--input-bg);
-    }
+        .output-header {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 8px;
+        }
 
-    .copy-btn svg {
-      width: 16px;
-      height: 16px;
-    }
+        .copy-btn {
+            width: 32px;
+            height: 32px;
+            padding: 6px;
+            margin-top: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            color: var(--text);
+        }
 
-    small {
-      color: var(--muted);
-    }
+        .copy-btn:hover {
+            background: var(--input-bg);
+        }
 
-    .error {
-      border: 2px solid var(--error);
-      background: var(--error-bg);
-    }
+        .copy-btn svg {
+            width: 16px;
+            height: 16px;
+        }
 
-    .flash {
-      animation: flashBorder 0.55s ease-in-out 2;
-    }
+        small {
+            color: var(--muted);
+        }
 
-    @keyframes flashBorder {
-      0%, 100% {
-        border-color: var(--border);
-        box-shadow: none;
-      }
-      50% {
-        border-color: var(--flash);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--flash) 25%, transparent);
-      }
-    }
+        .error {
+            border: 2px solid var(--error);
+            background: var(--error-bg);
+        }
 
-    #errorMessage {
-      margin-top: 12px;
-      color: var(--error);
-      font-weight: bold;
-      white-space: pre-line;
-    }
+        .flash {
+            animation: flashBorder 0.55s ease-in-out 2;
+        }
 
-    footer {
-      max-width: 1300px;
-      margin: 18px auto 0;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-    }
+        @keyframes flashBorder {
+
+            0%,
+            100% {
+                border-color: var(--border);
+                box-shadow: none;
+            }
+
+            50% {
+                border-color: var(--flash);
+                box-shadow: 0 0 0 3px color-mix(in srgb, var(--flash) 25%, transparent);
+            }
+        }
+
+        #errorMessage {
+            margin-top: 12px;
+            color: var(--error);
+            font-weight: bold;
+            white-space: pre-line;
+        }
+
+        footer {
+            max-width: 1300px;
+            margin: 18px auto 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
 
 
-    .hero {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 20px;
-      padding: 22px;
-      border-radius: 18px;
-      background:
-        radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 18%, transparent), transparent 34%),
-        linear-gradient(135deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
-      border: 1px solid var(--border);
-    }
+        .hero {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 22px;
+            border-radius: 18px;
+            background:
+                radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 18%, transparent), transparent 34%),
+                linear-gradient(135deg, color-mix(in srgb, var(--card) 92%, var(--accent)), var(--card));
+            border: 1px solid var(--border);
+        }
 
-    .eyebrow {
-      display: inline-flex;
-      width: fit-content;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      color: var(--accent-strong);
-      background: color-mix(in srgb, var(--accent) 12%, transparent);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
+        .eyebrow {
+            display: inline-flex;
+            width: fit-content;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            color: var(--accent-strong);
+            background: color-mix(in srgb, var(--accent) 12%, transparent);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
 
-    .hero h1 {
-      margin: 0;
-      font-size: clamp(32px, 5vw, 56px);
-      line-height: 0.95;
-      letter-spacing: -0.055em;
-    }
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(32px, 5vw, 56px);
+            line-height: 0.95;
+            letter-spacing: -0.055em;
+        }
 
-    .hero-copy {
-      max-width: 720px;
-      color: var(--muted);
-      font-size: 17px;
-      line-height: 1.55;
-      margin: 0;
-    }
+        .hero-copy {
+            max-width: 720px;
+            color: var(--muted);
+            font-size: 17px;
+            line-height: 1.55;
+            margin: 0;
+        }
 
-    .trust-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 6px;
-    }
+        .trust-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
 
-    .pill {
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 7px 10px;
-      color: var(--muted);
-      background: color-mix(in srgb, var(--input-bg) 88%, transparent);
-      font-size: 12px;
-      font-weight: 700;
-    }
+        .pill {
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 7px 10px;
+            color: var(--muted);
+            background: color-mix(in srgb, var(--input-bg) 88%, transparent);
+            font-size: 12px;
+            font-weight: 700;
+        }
 
-    .status-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      margin: 18px 0 4px;
-    }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin: 18px 0 4px;
+        }
 
-    .metric-card {
-      padding: 14px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: color-mix(in srgb, var(--input-bg) 80%, transparent);
-      animation: resultIn 260ms ease-out;
-    }
+        .metric-card {
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: color-mix(in srgb, var(--input-bg) 80%, transparent);
+            animation: resultIn 260ms ease-out;
+        }
 
-    .metric-label {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
+        .metric-label {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
 
-    .metric-value {
-      margin-top: 6px;
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-    }
+        .metric-value {
+            margin-top: 6px;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+        }
 
-    .smart-panel {
-      display: block;
-      min-height: 74px;
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: color-mix(in srgb, var(--accent) 8%, var(--card));
-      animation: resultIn 260ms ease-out;
-    }
+        .smart-panel {
+            display: block;
+            min-height: 74px;
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: color-mix(in srgb, var(--accent) 8%, var(--card));
+            animation: resultIn 260ms ease-out;
+        }
 
-    .smart-panel.visible {
-      display: block;
-    }
+        .smart-panel.visible {
+            display: block;
+        }
 
-    .empty-value {
-      color: var(--muted);
-    }
+        .empty-value {
+            color: var(--muted);
+        }
 
-    .smart-panel strong {
-      display: block;
-      margin-bottom: 6px;
-    }
+        .smart-panel strong {
+            display: block;
+            margin-bottom: 6px;
+        }
 
-    .smart-panel ul {
-      margin: 8px 0 0;
-      padding-left: 20px;
-      color: var(--muted);
-    }
+        .smart-panel ul {
+            margin: 8px 0 0;
+            padding-left: 20px;
+            color: var(--muted);
+        }
 
-    .success-message {
-      display: block;
-      min-height: 22px;
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid color-mix(in srgb, var(--success) 40%, var(--border));
-      color: var(--success);
-      background: color-mix(in srgb, var(--success) 10%, transparent);
-      font-weight: 800;
-      animation: resultIn 220ms ease-out;
-    }
+        .success-message {
+            display: block;
+            min-height: 22px;
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid color-mix(in srgb, var(--success) 40%, var(--border));
+            color: var(--success);
+            background: color-mix(in srgb, var(--success) 10%, transparent);
+            font-weight: 800;
+            animation: resultIn 220ms ease-out;
+        }
 
-    .success-message.visible {
-      display: block;
-    }
+        .success-message.visible {
+            display: block;
+        }
 
-    .success-message.empty {
-      color: var(--muted);
-      border-color: var(--border);
-      background: color-mix(in srgb, var(--input-bg) 88%, transparent);
-    }
+        .success-message.empty {
+            color: var(--muted);
+            border-color: var(--border);
+            background: color-mix(in srgb, var(--input-bg) 88%, transparent);
+        }
 
-    @keyframes resultIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+        @keyframes resultIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
 
-    .output-loading {
-      position: relative;
-      overflow: hidden;
-      pointer-events: none;
-    }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    .output-loading::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 12px;
-      background:
-        linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 12%, transparent), transparent),
-        color-mix(in srgb, var(--input-bg) 88%, transparent);
-      animation: shimmer 700ms ease-in-out infinite;
-      opacity: 0.75;
-    }
+        .output-loading {
+            position: relative;
+            overflow: hidden;
+            pointer-events: none;
+        }
 
-    @keyframes shimmer {
-      from {
-        transform: translateX(-100%);
-      }
-      to {
-        transform: translateX(100%);
-      }
-    }
+        .output-loading::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            background:
+                linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 12%, transparent), transparent),
+                color-mix(in srgb, var(--input-bg) 88%, transparent);
+            animation: shimmer 700ms ease-in-out infinite;
+            opacity: 0.75;
+        }
 
-    textarea[readonly] {
-      transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease;
-    }
+        @keyframes shimmer {
+            from {
+                transform: translateX(-100%);
+            }
 
-    .result-ready {
-      border-color: color-mix(in srgb, var(--success) 55%, var(--border));
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 12%, transparent);
-    }
+            to {
+                transform: translateX(100%);
+            }
+        }
 
-    @media (max-width: 900px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
+        textarea[readonly] {
+            transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease;
+        }
 
-      .grid-hours {
-        grid-template-columns: 1fr;
-      }
+        .result-ready {
+            border-color: color-mix(in srgb, var(--success) 55%, var(--border));
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 12%, transparent);
+        }
 
-      .actions {
-        flex-direction: column;
-        align-items: stretch;
-      }
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
 
-      .status-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-  </style>
+            .grid-hours {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .status-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div class="box">
-    <section class="hero" aria-labelledby="heroTitle">
-      <div class="eyebrow" data-i18n="eyebrow">SquadTime</div>
-      <h1 id="heroTitle" data-i18n="heroTitle">Plan complex workloads in seconds.</h1>
-      <p class="hero-copy" data-i18n="heroCopy">No Excel. No manual counting. No avoidable scheduling mistakes. Turn workload hours into precise start dates, end dates and end times instantly.</p>
-      <div class="trust-strip" aria-label="Privacy and performance highlights">
-        <span class="pill" data-i18n="privacyPill">No data leaves your browser</span>
-        <span class="pill" data-i18n="instantPill">Instant calculation</span>
-        <span class="pill" data-i18n="spreadsheetPill">Spreadsheet-ready output</span>
-      </div>
-    </section>
+    <div class="container">
+        <div class="box">
+            <section class="hero" aria-labelledby="heroTitle">
+                <div class="eyebrow" data-i18n="eyebrow">SquadTime</div>
+                <h1 id="heroTitle" data-i18n="heroTitle">Plan complex workloads in seconds.</h1>
+                <p class="hero-copy" data-i18n="heroCopy">No Excel. No manual counting. No avoidable scheduling
+                    mistakes. Turn workload hours into precise start dates, end dates and end times instantly.</p>
+                <div class="trust-strip" aria-label="Privacy and performance highlights">
+                    <span class="pill" data-i18n="privacyPill">No data leaves your browser</span>
+                    <span class="pill" data-i18n="instantPill">Instant calculation</span>
+                    <span class="pill" data-i18n="spreadsheetPill">Spreadsheet-ready output</span>
+                </div>
+            </section>
 
-    <label for="startDate" data-i18n="startDateLabel">Start date</label>
-    <input id="startDate" placeholder="dd/MM/yyyy or MMM d, yyyy" data-i18n-placeholder="startDatePlaceholder" />
-    <small data-i18n="startDateHelp">Paste a date like May 11, 2026. We will handle the schedule from there.</small>
+            <label for="startDate" data-i18n="startDateLabel">Start date</label>
+            <input id="startDate" placeholder="dd/MM/yyyy or MMM d, yyyy"
+                data-i18n-placeholder="startDatePlaceholder" />
+            <small data-i18n="startDateHelp">Paste a date like May 11, 2026. We will handle the schedule from
+                there.</small>
 
-    <div id="errorMessage" aria-live="polite"></div>
-    <div id="successMessage" class="success-message" aria-live="polite"></div>
-    <div id="insights" class="status-grid" aria-live="polite"></div>
-    <div style="display: none" id="smartPanel" class="smart-panel" aria-live="polite"></div>
+            <div id="errorMessage" aria-live="polite"></div>
+            <div id="successMessage" class="success-message" aria-live="polite"></div>
+            <div id="insights" class="status-grid" aria-live="polite"></div>
+            <div style="display: none" id="smartPanel" class="smart-panel" aria-live="polite"></div>
 
-    <div class="grid-hours">
-      <div>
-        <label for="hourList" data-i18n="workloadLabel">Workload hours</label>
-        <textarea id="hourList" placeholder="Paste your workload hours. We will handle the rest." data-i18n-placeholder="workloadPlaceholder"></textarea>
-      </div>
+            <div class="grid-hours">
+                <div>
+                    <label for="hourList" data-i18n="workloadLabel">Workload hours</label>
+                    <textarea id="hourList" placeholder="Paste your workload hours. We will handle the rest."
+                        data-i18n-placeholder="workloadPlaceholder"></textarea>
+                </div>
 
-      <div>
-        <div class="output-header">
-          <label for="outputStartDates" data-i18n="outputStartDatesLabel">Start dates</label>
-          <button class="copy-btn" title="Copy start dates" aria-label="Copy start dates" data-i18n-title="copyStartDatesTitle" data-i18n-aria-label="copyStartDatesTitle" onclick="copyTextarea('outputStartDates')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-          </button>
+                <div>
+                    <div class="output-header">
+                        <label for="outputStartDates" data-i18n="outputStartDatesLabel">Start dates</label>
+                        <button class="copy-btn" title="Copy start dates" aria-label="Copy start dates"
+                            data-i18n-title="copyStartDatesTitle" data-i18n-aria-label="copyStartDatesTitle"
+                            onclick="copyTextarea('outputStartDates')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <textarea id="outputStartDates" readonly placeholder="–"></textarea>
+                </div>
+
+                <div>
+                    <div class="output-header">
+                        <label for="outputEndDates" data-i18n="outputEndDatesLabel">End dates</label>
+                        <button class="copy-btn" title="Copy end dates" aria-label="Copy end dates"
+                            data-i18n-title="copyEndDatesTitle" data-i18n-aria-label="copyEndDatesTitle"
+                            onclick="copyTextarea('outputEndDates')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <textarea id="outputEndDates" readonly placeholder="–"></textarea>
+                </div>
+
+                <div>
+                    <div class="output-header">
+                        <label for="outputEndTimes" data-i18n="outputEndTimesLabel">End times</label>
+                        <button class="copy-btn" title="Copy end times" aria-label="Copy end times"
+                            data-i18n-title="copyEndTimesTitle" data-i18n-aria-label="copyEndTimesTitle"
+                            onclick="copyTextarea('outputEndTimes')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <textarea id="outputEndTimes" readonly placeholder="–"></textarea>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="calculateButton" onclick="calculate(this)" data-i18n="generateButton">Generate
+                    Schedule</button>
+                <button id="copyAllButton" onclick="copyAll(this)" data-i18n="copyAllButton">Copy to
+                    Spreadsheet</button>
+                <span id="appStatus" class="app-status" aria-live="polite" data-i18n="statusReady">Ready</span>
+            </div>
         </div>
-        <textarea id="outputStartDates" readonly placeholder="–"></textarea>
-      </div>
 
-      <div>
-        <div class="output-header">
-          <label for="outputEndDates" data-i18n="outputEndDatesLabel">End dates</label>
-          <button class="copy-btn" title="Copy end dates" aria-label="Copy end dates" data-i18n-title="copyEndDatesTitle" data-i18n-aria-label="copyEndDatesTitle" onclick="copyTextarea('outputEndDates')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-          </button>
+        <div class="box">
+            <h3 data-i18n="settingsTitle">Settings</h3>
+
+            <div class="config-row">
+                <label for="languageMode" data-i18n="languageLabel">Language</label>
+                <select id="languageMode">
+                    <option value="en" data-i18n="languageEnglish">English</option>
+                    <option value="pt-BR" data-i18n="languagePortuguese">Português (pt-BR)</option>
+                </select>
+            </div>
+
+            <div class="config-row">
+                <label for="themeMode" data-i18n="themeLabel">Theme</label>
+                <select id="themeMode">
+                    <option value="" data-i18n="selectTheme">Select theme</option>
+                    <option value="auto" data-i18n="themeAuto">Auto</option>
+                    <option value="light" data-i18n="themeLight">Light</option>
+                    <option value="dark" data-i18n="themeDark">Dark</option>
+                </select>
+            </div>
+
+            <div class="config-row">
+                <label for="dayStartTime" data-i18n="dayStartLabel">Day start time</label>
+                <input id="dayStartTime" type="time" />
+            </div>
+
+            <div class="config-row">
+                <label for="breakStartTime" data-i18n="breakStartLabel">Break start time</label>
+                <input id="breakStartTime" type="time" />
+            </div>
+
+            <div class="config-row">
+                <label for="breakEndTime" data-i18n="breakEndLabel">Break end time</label>
+                <input id="breakEndTime" type="time" />
+            </div>
+
+            <div class="config-row">
+                <label for="dayEndTime" data-i18n="dayEndLabel">Day end time</label>
+                <input id="dayEndTime" type="time" />
+            </div>
+
+            <div class="config-row">
+                <label for="skipWeekends" data-i18n="skipWeekendsLabel">Skip weekends</label>
+                <select id="skipWeekends">
+                    <option value="" data-i18n="selectOption">Select</option>
+                    <option value="yes" data-i18n="yesOption">Yes</option>
+                    <option value="no" data-i18n="noOption">No</option>
+                </select>
+            </div>
+
+            <div class="actions">
+                <button id="resetSettingsButton" onclick="resetSettings(this)" data-i18n="resetButton">Reset
+                    settings</button>
+            </div>
         </div>
-        <textarea id="outputEndDates" readonly placeholder="–"></textarea>
-      </div>
-
-      <div>
-        <div class="output-header">
-          <label for="outputEndTimes" data-i18n="outputEndTimesLabel">End times</label>
-          <button class="copy-btn" title="Copy end times" aria-label="Copy end times" data-i18n-title="copyEndTimesTitle" data-i18n-aria-label="copyEndTimesTitle" onclick="copyTextarea('outputEndTimes')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-          </button>
-        </div>
-        <textarea id="outputEndTimes" readonly placeholder="–"></textarea>
-      </div>
     </div>
 
-    <div class="actions">
-      <button id="calculateButton" onclick="calculate(this)" data-i18n="generateButton">Generate Schedule</button>
-      <button id="copyAllButton" onclick="copyAll(this)" data-i18n="copyAllButton">Copy to Spreadsheet</button>
-      <span id="appStatus" class="app-status" aria-live="polite" data-i18n="statusReady">Ready</span>
-    </div>
-  </div>
-
-  <div class="box">
-    <h3 data-i18n="settingsTitle">Settings</h3>
-
-    <div class="config-row">
-      <label for="languageMode" data-i18n="languageLabel">Language</label>
-      <select id="languageMode">
-        <option value="en" data-i18n="languageEnglish">English</option>
-        <option value="pt-BR" data-i18n="languagePortuguese">Português (pt-BR)</option>
-      </select>
-    </div>
-
-    <div class="config-row">
-      <label for="themeMode" data-i18n="themeLabel">Theme</label>
-      <select id="themeMode">
-        <option value="" data-i18n="selectTheme">Select theme</option>
-        <option value="auto" data-i18n="themeAuto">Auto</option>
-        <option value="light" data-i18n="themeLight">Light</option>
-        <option value="dark" data-i18n="themeDark">Dark</option>
-      </select>
-    </div>
-
-    <div class="config-row">
-      <label for="dayStartTime" data-i18n="dayStartLabel">Day start time</label>
-      <input id="dayStartTime" type="time" />
-    </div>
-
-    <div class="config-row">
-      <label for="breakStartTime" data-i18n="breakStartLabel">Break start time</label>
-      <input id="breakStartTime" type="time" />
-    </div>
-
-    <div class="config-row">
-      <label for="breakEndTime" data-i18n="breakEndLabel">Break end time</label>
-      <input id="breakEndTime" type="time" />
-    </div>
-
-    <div class="config-row">
-      <label for="dayEndTime" data-i18n="dayEndLabel">Day end time</label>
-      <input id="dayEndTime" type="time" />
-    </div>
-
-    <div class="config-row">
-      <label for="skipWeekends" data-i18n="skipWeekendsLabel">Skip weekends</label>
-      <select id="skipWeekends">
-        <option value="" data-i18n="selectOption">Select</option>
-        <option value="yes" data-i18n="yesOption">Yes</option>
-        <option value="no" data-i18n="noOption">No</option>
-      </select>
-    </div>
-
-    <div class="actions">
-      <button id="resetSettingsButton" onclick="resetSettings(this)" data-i18n="resetButton">Reset settings</button>
-    </div>
-  </div>
-</div>
-
-<footer><span data-i18n="designedBy">designed by</span> <a href="https://argolo.dev" target="_blank" rel="noopener noreferrer">argolo.dev</a></footer>
-
-<script>
-  const STORAGE_KEY = "squadTimeSettings";
-  const SETTINGS_VERSION = 4;
-  const MAX_WORKLOAD_HOURS = 10000;
-
-  function detectUserLanguage() {
-    const lang = navigator.language || navigator.userLanguage || "en";
-
-    if (lang.toLowerCase().startsWith("pt")) {
-      return "pt-BR";
-    }
-
-    return "en";
-  }
-
-  const DEFAULT_SETTINGS = {
-    languageMode: detectUserLanguage(),
-    themeMode: "auto",
-    startDate: "May 11, 2026",
-    hourList: "4\n8\n12\n6\n2",
-    dayStartTime: "08:00",
-    breakStartTime: "12:00",
-    breakEndTime: "14:00",
-    dayEndTime: "18:00",
-    skipWeekends: "yes"
-  };
-
-  const MONTHS = {
-    Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-    Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
-  };
-
-  const SETTINGS_IDS = [
-    "languageMode",
-    "themeMode",
-    "startDate",
-    "hourList",
-    "dayStartTime",
-    "breakStartTime",
-    "breakEndTime",
-    "dayEndTime",
-    "skipWeekends"
-
-  ];
-
-  const TRANSLATIONS = {
-    en: {
-      eyebrow: "SquadTime",
-      heroTitle: "Plan complex workloads in seconds.",
-      heroCopy: "No Excel. No manual counting. No avoidable scheduling mistakes. Turn workload hours into precise start dates, end dates and end times instantly.",
-      privacyPill: "No data leaves your browser",
-      instantPill: "Instant calculation",
-      spreadsheetPill: "Spreadsheet-ready output",
-      startDateLabel: "Start date",
-      startDateHelp: "Paste a date like May 11, 2026. We will handle the schedule from there.",
-      startDatePlaceholder: "dd/MM/yyyy or MMM d, yyyy",
-      workloadLabel: "Workload hours",
-      workloadPlaceholder: "Paste your workload hours. We will handle the rest.",
-      outputStartDatesLabel: "Start dates",
-      outputEndDatesLabel: "End dates",
-      outputEndTimesLabel: "End times",
-      copyStartDatesTitle: "Copy start dates",
-      copyEndDatesTitle: "Copy end dates",
-      copyEndTimesTitle: "Copy end times",
-      generateButton: "Generate Schedule",
-      copyAllButton: "Copy to Spreadsheet",
-      statusReady: "Ready",
-      statusCalculating: "Calculating…",
-      statusSaved: "Saved automatically",
-      statusCopied: "Copied to clipboard",
-      statusError: "Needs attention",
-      settingsTitle: "Settings",
-      languageLabel: "Language",
-      languageEnglish: "English",
-      languagePortuguese: "Português (pt-BR)",
-      themeLabel: "Theme",
-      selectTheme: "Select theme",
-      themeAuto: "Auto",
-      themeLight: "Light",
-      themeDark: "Dark",
-      dayStartLabel: "Day start time",
-      breakStartLabel: "Break start time",
-      breakEndLabel: "Break end time",
-      dayEndLabel: "Day end time",
-      skipWeekendsLabel: "Skip weekends",
-      selectOption: "Select",
-      yesOption: "Yes",
-      noOption: "No",
-      resetButton: "Reset settings",
-      designedBy: "designed by",
-      totalWorkload: "Total workload",
-      estimatedSpan: "Estimated span",
-      finalTime: "Final time",
-      breakImpact: "Break impact",
-      smartNotesTitle: "Smart schedule notes",
-      scheduleGenerated: "Schedule generated instantly — ready to copy into your spreadsheet.",
-      noContentToCopy: "There is no content to copy.",
-      startDateInvalid: "Start date is invalid. Suggestion: use a real date like May 11, 2026.",
-      startDateFormat: "Start date must use dd/MM/yyyy or MMM d, yyyy. Suggestion: try May 11, 2026.",
-      timeFormat: "{fieldName} must use HH:mm format. Suggestion: use 08:00.",
-      emptyWorkload: "Enter at least one workload value. Suggestion: paste one number per line, for example 4, 8, 12.",
-      invalidWorkload: "Invalid workload value: \"{value}\". Use positive numbers only. Suggestion: remove letters and use values like 4, 8 or 2.5.",
-      positiveWorkload: "Invalid workload value: \"{value}\". Value must be greater than zero.",
-      maxWorkload: "Invalid workload value: \"{value}\". Maximum allowed is {max} hours.",
-      dayStartBeforeEnd: "Day start time must be earlier than day end time. Suggestion: keep the working day between 08:00 and 18:00.",
-      breakStartBeforeEnd: "Break start time must be earlier than break end time. Suggestion: use a break like 12:00 to 14:00.",
-      breakInsideStart: "Break start time must be inside the working day. Suggestion: set it after the day start time.",
-      breakInsideEnd: "Break end time must be inside the working day. Suggestion: set it before the day end time.",
-      skipWeekendsRequired: "Select whether weekends should be skipped. Suggestion: choose Yes for business-day planning.",
-      day: "day",
-      days: "days",
-      breakApplied: "Break applied {count} {unit}.",
-      skippedWeekend: "Skipped {count} weekend {unit}.",
-      workloadContinued: "Workload continued across {count} working {unit}.",
-      timeSingular: "time",
-      timePlural: "times"
-    },
-    "pt-BR": {
-      eyebrow: "SquadTime",
-      heroTitle: "Planeje cargas complexas em segundos.",
-      heroCopy: "Sem Excel. Sem contagem manual. Sem erros evitáveis de agenda. Transforme horas de trabalho em datas de início, datas de fim e horários finais com precisão instantânea.",
-      privacyPill: "Nenhum dado sai do seu navegador",
-      instantPill: "Cálculo instantâneo",
-      spreadsheetPill: "Pronto para planilhas",
-      startDateLabel: "Data de início",
-      startDateHelp: "Cole uma data como May 11, 2026. Nós cuidamos do cronograma a partir daí.",
-      startDatePlaceholder: "dd/MM/yyyy ou MMM d, yyyy",
-      workloadLabel: "Horas de trabalho",
-      workloadPlaceholder: "Cole suas horas de trabalho. Nós cuidamos do resto.",
-      outputStartDatesLabel: "Datas de início",
-      outputEndDatesLabel: "Datas de fim",
-      outputEndTimesLabel: "Horários finais",
-      copyStartDatesTitle: "Copiar datas de início",
-      copyEndDatesTitle: "Copiar datas de fim",
-      copyEndTimesTitle: "Copiar horários finais",
-      generateButton: "Gerar cronograma",
-      copyAllButton: "Copiar para planilha",
-      statusReady: "Pronto",
-      statusCalculating: "Calculando…",
-      statusSaved: "Salvo automaticamente",
-      statusCopied: "Copiado para a área de transferência",
-      statusError: "Requer atenção",
-      settingsTitle: "Configurações",
-      languageLabel: "Idioma",
-      languageEnglish: "English",
-      languagePortuguese: "Português (pt-BR)",
-      themeLabel: "Tema",
-      selectTheme: "Selecionar tema",
-      themeAuto: "Auto",
-      themeLight: "Claro",
-      themeDark: "Escuro",
-      dayStartLabel: "Início do dia",
-      breakStartLabel: "Início da pausa",
-      breakEndLabel: "Fim da pausa",
-      dayEndLabel: "Fim do dia",
-      skipWeekendsLabel: "Ignorar fins de semana",
-      selectOption: "Selecionar",
-      yesOption: "Sim",
-      noOption: "Não",
-      resetButton: "Redefinir configurações",
-      designedBy: "projetado por",
-      totalWorkload: "Carga total",
-      estimatedSpan: "Duração estimada",
-      finalTime: "Horário final",
-      breakImpact: "Impacto da pausa",
-      smartNotesTitle: "Notas inteligentes do cronograma",
-      scheduleGenerated: "Cronograma gerado instantaneamente — pronto para copiar para sua planilha.",
-      noContentToCopy: "Não há conteúdo para copiar.",
-      startDateInvalid: "A data de início é inválida. Sugestão: use uma data real como May 11, 2026.",
-      startDateFormat: "A data de início deve usar dd/MM/yyyy ou MMM d, yyyy. Sugestão: tente May 11, 2026.",
-      timeFormat: "{fieldName} deve usar o formato HH:mm. Sugestão: use 08:00.",
-      emptyWorkload: "Informe pelo menos uma carga de trabalho. Sugestão: cole um número por linha, por exemplo 4, 8, 12.",
-      invalidWorkload: "Carga de trabalho inválida: \"{value}\". Use apenas números positivos. Sugestão: remova letras e use valores como 4, 8 ou 2.5.",
-      positiveWorkload: "Carga de trabalho inválida: \"{value}\". O valor deve ser maior que zero.",
-      maxWorkload: "Carga de trabalho inválida: \"{value}\". O máximo permitido é {max} horas.",
-      dayStartBeforeEnd: "O início do dia deve ser anterior ao fim do dia. Sugestão: mantenha o expediente entre 08:00 e 18:00.",
-      breakStartBeforeEnd: "O início da pausa deve ser anterior ao fim da pausa. Sugestão: use uma pausa como 12:00 até 14:00.",
-      breakInsideStart: "O início da pausa deve estar dentro do expediente. Sugestão: defina após o início do dia.",
-      breakInsideEnd: "O fim da pausa deve estar dentro do expediente. Sugestão: defina antes do fim do dia.",
-      skipWeekendsRequired: "Selecione se os fins de semana devem ser ignorados. Sugestão: escolha Sim para planejamento em dias úteis.",
-      day: "dia",
-      days: "dias",
-      breakApplied: "Pausa aplicada {count} {unit}.",
-      skippedWeekend: "{count} {unit} de fim de semana ignorado(s).",
-      workloadContinued: "A carga continuou por {count} {unit} útil(eis).",
-      timeSingular: "vez",
-      timePlural: "vezes"
-    }
-  };
-
-  function getLanguage() {
-    const language = document.getElementById("languageMode")?.value || DEFAULT_SETTINGS.languageMode;
-    return TRANSLATIONS[language] ? language : "en";
-  }
-
-  function t(key, params = {}) {
-    const dictionary = TRANSLATIONS[getLanguage()] || TRANSLATIONS.en;
-    let value = dictionary[key] || TRANSLATIONS.en[key] || key;
-
-    Object.entries(params).forEach(([name, replacement]) => {
-      value = value.replaceAll(`{${name}}`, replacement);
-    });
-
-    return value;
-  }
-
-  function applyI18n() {
-    const language = getLanguage();
-    document.documentElement.lang = language === "pt-BR" ? "pt-BR" : "en";
-
-    document.querySelectorAll("[data-i18n]").forEach(element => {
-      element.textContent = t(element.dataset.i18n);
-    });
-
-    document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
-      element.placeholder = t(element.dataset.i18nPlaceholder);
-    });
-
-    document.querySelectorAll("[data-i18n-title]").forEach(element => {
-      element.title = t(element.dataset.i18nTitle);
-    });
-
-    document.querySelectorAll("[data-i18n-aria-label]").forEach(element => {
-      element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
-    });
-
-    clearResultFeedback();
-    setAppStatus(t("statusReady"));
-  }
-
-  function flashElement(element) {
-    if (!element) return;
-
-    element.classList.remove("flash");
-    void element.offsetWidth;
-    element.classList.add("flash");
-  }
-
-  function applySettingsValues(values) {
-    SETTINGS_IDS.forEach(id => {
-      const element = document.getElementById(id);
-      if (!element || values[id] === undefined) return;
-
-      element.value = values[id];
-    });
-  }
-
-function loadSettings() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-
-  // PRIMEIRO ACESSO
-  if (!saved) {
-    const initialValues = {
-      ...DEFAULT_SETTINGS,
-      languageMode: detectUserLanguage()
-    };
-
-    applySettingsValues(initialValues);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      version: SETTINGS_VERSION,
-      values: initialValues
-    }));
-
-    return;
-  }
-
-  try {
-    const settings = JSON.parse(saved);
-
-    const values =
-      settings && settings.version === SETTINGS_VERSION
-        ? settings.values
-        : settings;
-
-    const mergedValues = {
-      ...DEFAULT_SETTINGS,
-      ...values,
-      languageMode: values?.languageMode || detectUserLanguage()
-    };
-
-    applySettingsValues(mergedValues);
-
-  } catch {
-    localStorage.removeItem(STORAGE_KEY);
-
-    // fallback seguro
-    applySettingsValues(DEFAULT_SETTINGS);
-  }
-}
-
-  function saveSettings() {
-    const values = {};
-
-    SETTINGS_IDS.forEach(id => {
-      const element = document.getElementById(id);
-      values[id] = element.value;
-    });
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      version: SETTINGS_VERSION,
-      values
-    }));
-  }
-
-  function applyTheme() {
-    const mode = document.getElementById("themeMode").value;
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-    document.body.classList.toggle(
-      "dark",
-      mode === "dark" || (mode === "auto" && prefersDark)
-    );
-  }
-
-  function clearErrors() {
-    document.getElementById("errorMessage").textContent = "";
-    document.getElementById("successMessage").textContent = "";
-    document.getElementById("successMessage").classList.remove("visible");
-
-    document.querySelectorAll("input, textarea, select").forEach(element => {
-      element.classList.remove("error");
-      element.setAttribute("aria-invalid", "false");
-    });
-  }
-
-  function markError(id, messages, message) {
-    document.getElementById(id).classList.add("error");
-    setFieldAriaState(id, true);
-    messages.push(message);
-  }
-
-  function parseDateBR(value) {
-    const match = value.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-    if (!match) return null;
-
-    const day = Number(match[1]);
-    const month = Number(match[2]) - 1;
-    const year = Number(match[3]);
-    const date = new Date(year, month, day);
-
-    if (date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) {
-      throw new Error(t("startDateInvalid"));
-    }
-
-    return { date, format: "dd/MM/yyyy" };
-  }
-
-  function parseDateMMM(value) {
-    const match = value.trim().match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{1,2}),\s(\d{4})$/);
-    if (!match) return null;
-
-    const month = MONTHS[match[1]];
-    const day = Number(match[2]);
-    const year = Number(match[3]);
-    const date = new Date(year, month, day);
-
-    if (date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) {
-      throw new Error(t("startDateInvalid"));
-    }
-
-    return { date, format: "MMM d, yyyy" };
-  }
-
-  function parseDateAuto(value) {
-    const br = parseDateBR(value);
-    if (br) return br;
-
-    const mmm = parseDateMMM(value);
-    if (mmm) return mmm;
-
-    throw new Error(t("startDateFormat"));
-  }
-
-  function formatDateBR(date) {
-    return String(date.getDate()).padStart(2, "0") + "/" +
-      String(date.getMonth() + 1).padStart(2, "0") + "/" +
-      date.getFullYear();
-  }
-
-  function formatDateMMM(date) {
-    const months = Object.keys(MONTHS);
-
-    return months[date.getMonth()] + " " +
-      date.getDate() + ", " +
-      date.getFullYear();
-  }
-
-  function formatDateByInput(date, format) {
-    return format === "dd/MM/yyyy" ? formatDateBR(date) : formatDateMMM(date);
-  }
-
-  function parseTimeToMinutes(value, fieldName) {
-    const match = value.trim().match(/^([01]\d|2[0-3]):([0-5]\d)$/);
-
-    if (!match) {
-      throw new Error(t("timeFormat", { fieldName }));
-    }
-
-    return Number(match[1]) * 60 + Number(match[2]);
-  }
-
-  function formatMinutesToTime(minutes) {
-    return String(Math.floor(minutes / 60)).padStart(2, "0") + ":" +
-      String(minutes % 60).padStart(2, "0");
-  }
-
-  function addDays(date, days) {
-    const copy = new Date(date);
-    copy.setDate(copy.getDate() + days);
-    return copy;
-  }
-
-  function isWeekend(date) {
-    return date.getDay() === 0 || date.getDay() === 6;
-  }
-
-  function countWeekendDaysBetween(fromDate, toDate) {
-    let count = 0;
-    let cursor = addDays(fromDate, 1);
-
-    while (cursor <= toDate) {
-      if (isWeekend(cursor)) count += 1;
-      cursor = addDays(cursor, 1);
-    }
-
-    return count;
-  }
-
-  function nextWorkingDay(date, config) {
-    let nextDate = new Date(date);
-
-    do {
-      nextDate = addDays(nextDate, 1);
-    } while (config.skipWeekends && isWeekend(nextDate));
-
-    return nextDate;
-  }
-
-  function normalizeWorkingDate(date, config) {
-    let normalizedDate = new Date(date);
-
-    while (config.skipWeekends && isWeekend(normalizedDate)) {
-      normalizedDate = addDays(normalizedDate, 1);
-    }
-
-    return normalizedDate;
-  }
-
-  function parseHourList(value) {
-    const values = value
-      .split(/[\s,;]+/)
-      .map(v => v.trim())
-      .filter(Boolean);
-
-    if (!values.length) {
-      throw new Error(t("emptyWorkload"));
-    }
-
-    return values.map(value => {
-      const normalizedValue = value.replace(",", ".");
-
-      if (!/^\d+(\.\d+)?$/.test(normalizedValue)) {
-        throw new Error(t("invalidWorkload", { value }));
-      }
-
-      const number = Number(normalizedValue);
-
-      if (number <= 0) {
-        throw new Error(t("positiveWorkload", { value }));
-      }
-
-      if (number > MAX_WORKLOAD_HOURS) {
-        throw new Error(t("maxWorkload", { value, max: MAX_WORKLOAD_HOURS }));
-      }
-
-      return number;
-    });
-  }
-
-  function createFieldError(message, fields) {
-    const error = new Error(message);
-    error.fields = fields;
-    return error;
-  }
-
-  function validateConfig(config) {
-    if (config.dayStartTime >= config.dayEndTime) {
-      throw createFieldError(t("dayStartBeforeEnd"), ["dayStartTime", "dayEndTime"]);
-    }
-
-    if (config.breakStartTime >= config.breakEndTime) {
-      throw createFieldError(t("breakStartBeforeEnd"), ["breakStartTime", "breakEndTime"]);
-    }
-
-    if (config.breakStartTime < config.dayStartTime) {
-      throw createFieldError(t("breakInsideStart"), ["breakStartTime", "dayStartTime"]);
-    }
-
-    if (config.breakEndTime > config.dayEndTime) {
-      throw createFieldError(t("breakInsideEnd"), ["breakEndTime", "dayEndTime"]);
-    }
-  }
-
-
-  const EMPTY_VALUE = "–";
-  function getInsightLabels() {
-    return [
-      t("totalWorkload"),
-      t("estimatedSpan"),
-      t("finalTime"),
-      t("breakImpact")
-    ];
-  }
-
-  let statusTimeoutId;
-
-  function setAppStatus(message, state = "ready") {
-    const status = document.getElementById("appStatus");
-    if (!status) return;
-
-    status.textContent = message;
-    status.classList.toggle("busy", state === "busy");
-    status.classList.toggle("error-state", state === "error");
-  }
-
-  function setTemporaryAppStatus(message, state = "ready", fallbackKey = "statusReady") {
-    clearTimeout(statusTimeoutId);
-    setAppStatus(message, state);
-
-    statusTimeoutId = setTimeout(() => {
-      setAppStatus(t(fallbackKey));
-    }, 1800);
-  }
-
-  function setOutputLoading(isLoading) {
-    ["outputStartDates", "outputEndDates", "outputEndTimes"].forEach(id => {
-      const element = document.getElementById(id);
-      if (!element) return;
-
-      element.classList.toggle("output-loading", isLoading);
-    });
-  }
-
-  function markResultsReady() {
-    ["outputStartDates", "outputEndDates", "outputEndTimes"].forEach(id => {
-      const element = document.getElementById(id);
-      if (!element) return;
-
-      element.classList.remove("result-ready");
-      void element.offsetWidth;
-      element.classList.add("result-ready");
-      setTimeout(() => element.classList.remove("result-ready"), 900);
-    });
-  }
-
-  function renderMetricCards(items) {
-    document.getElementById("insights").innerHTML = items.map(([label, value]) => `
+    <footer><span data-i18n="designedBy">designed by</span> <a href="https://argolo.dev" target="_blank"
+            rel="noopener noreferrer">argolo.dev</a></footer>
+
+    <script>
+        const STORAGE_KEY = "squadTimeSettings";
+        const SETTINGS_VERSION = 4;
+        const MAX_WORKLOAD_HOURS = 10000;
+
+        function detectUserLanguage() {
+            const lang = navigator.language || navigator.userLanguage || "en";
+
+            if (lang.toLowerCase().startsWith("pt")) {
+                return "pt-BR";
+            }
+
+            return "en";
+        }
+
+        const DEFAULT_SETTINGS = {
+            languageMode: detectUserLanguage(),
+            themeMode: "auto",
+            startDate: "May 11, 2026",
+            hourList: "4\n8\n12\n6\n2",
+            dayStartTime: "08:00",
+            breakStartTime: "12:00",
+            breakEndTime: "14:00",
+            dayEndTime: "18:00",
+            skipWeekends: "yes"
+        };
+
+        const MONTHS = {
+            Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+            Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
+        };
+
+        const SETTINGS_IDS = [
+            "languageMode",
+            "themeMode",
+            "startDate",
+            "hourList",
+            "dayStartTime",
+            "breakStartTime",
+            "breakEndTime",
+            "dayEndTime",
+            "skipWeekends"
+
+        ];
+
+        const TRANSLATIONS = {
+            en: {
+                eyebrow: "SquadTime",
+                heroTitle: "Plan complex workloads in seconds.",
+                heroCopy: "No Excel. No manual counting. No avoidable scheduling mistakes. Turn workload hours into precise start dates, end dates and end times instantly.",
+                privacyPill: "No data leaves your browser",
+                instantPill: "Instant calculation",
+                spreadsheetPill: "Spreadsheet-ready output",
+                startDateLabel: "Start date",
+                startDateHelp: "Paste a date like May 11, 2026. We will handle the schedule from there.",
+                startDatePlaceholder: "dd/MM/yyyy or MMM d, yyyy",
+                workloadLabel: "Workload hours",
+                workloadPlaceholder: "Paste your workload hours. We will handle the rest.",
+                outputStartDatesLabel: "Start dates",
+                outputEndDatesLabel: "End dates",
+                outputEndTimesLabel: "End times",
+                copyStartDatesTitle: "Copy start dates",
+                copyEndDatesTitle: "Copy end dates",
+                copyEndTimesTitle: "Copy end times",
+                generateButton: "Generate Schedule",
+                copyAllButton: "Copy to Spreadsheet",
+                statusReady: "Ready",
+                statusCalculating: "Calculating…",
+                statusSaved: "Saved automatically",
+                statusCopied: "Copied to clipboard",
+                statusError: "Needs attention",
+                settingsTitle: "Settings",
+                languageLabel: "Language",
+                languageEnglish: "English",
+                languagePortuguese: "Português (pt-BR)",
+                themeLabel: "Theme",
+                selectTheme: "Select theme",
+                themeAuto: "Auto",
+                themeLight: "Light",
+                themeDark: "Dark",
+                dayStartLabel: "Day start time",
+                breakStartLabel: "Break start time",
+                breakEndLabel: "Break end time",
+                dayEndLabel: "Day end time",
+                skipWeekendsLabel: "Skip weekends",
+                selectOption: "Select",
+                yesOption: "Yes",
+                noOption: "No",
+                resetButton: "Reset settings",
+                designedBy: "designed by",
+                totalWorkload: "Total workload",
+                estimatedSpan: "Estimated span",
+                finalTime: "Final time",
+                breakImpact: "Break impact",
+                smartNotesTitle: "Smart schedule notes",
+                scheduleGenerated: "Schedule generated instantly — ready to copy into your spreadsheet.",
+                noContentToCopy: "There is no content to copy.",
+                startDateInvalid: "Start date is invalid. Suggestion: use a real date like May 11, 2026.",
+                startDateFormat: "Start date must use dd/MM/yyyy or MMM d, yyyy. Suggestion: try May 11, 2026.",
+                timeFormat: "{fieldName} must use HH:mm format. Suggestion: use 08:00.",
+                emptyWorkload: "Enter at least one workload value. Suggestion: paste one number per line, for example 4, 8, 12.",
+                invalidWorkload: "Invalid workload value: \"{value}\". Use positive numbers only. Suggestion: remove letters and use values like 4, 8 or 2.5.",
+                positiveWorkload: "Invalid workload value: \"{value}\". Value must be greater than zero.",
+                maxWorkload: "Invalid workload value: \"{value}\". Maximum allowed is {max} hours.",
+                dayStartBeforeEnd: "Day start time must be earlier than day end time. Suggestion: keep the working day between 08:00 and 18:00.",
+                breakStartBeforeEnd: "Break start time must be earlier than break end time. Suggestion: use a break like 12:00 to 14:00.",
+                breakInsideStart: "Break start time must be inside the working day. Suggestion: set it after the day start time.",
+                breakInsideEnd: "Break end time must be inside the working day. Suggestion: set it before the day end time.",
+                skipWeekendsRequired: "Select whether weekends should be skipped. Suggestion: choose Yes for business-day planning.",
+                day: "day",
+                days: "days",
+                breakApplied: "Break applied {count} {unit}.",
+                skippedWeekend: "Skipped {count} weekend {unit}.",
+                workloadContinued: "Workload continued across {count} working {unit}.",
+                timeSingular: "time",
+                timePlural: "times"
+            },
+            "pt-BR": {
+                eyebrow: "SquadTime",
+                heroTitle: "Planeje cargas complexas em segundos.",
+                heroCopy: "Sem Excel. Sem contagem manual. Sem erros evitáveis de agenda. Transforme horas de trabalho em datas de início, datas de fim e horários finais com precisão instantânea.",
+                privacyPill: "Nenhum dado sai do seu navegador",
+                instantPill: "Cálculo instantâneo",
+                spreadsheetPill: "Pronto para planilhas",
+                startDateLabel: "Data de início",
+                startDateHelp: "Cole uma data como May 11, 2026. Nós cuidamos do cronograma a partir daí.",
+                startDatePlaceholder: "dd/MM/yyyy ou MMM d, yyyy",
+                workloadLabel: "Horas de trabalho",
+                workloadPlaceholder: "Cole suas horas de trabalho. Nós cuidamos do resto.",
+                outputStartDatesLabel: "Datas de início",
+                outputEndDatesLabel: "Datas de fim",
+                outputEndTimesLabel: "Horários finais",
+                copyStartDatesTitle: "Copiar datas de início",
+                copyEndDatesTitle: "Copiar datas de fim",
+                copyEndTimesTitle: "Copiar horários finais",
+                generateButton: "Gerar cronograma",
+                copyAllButton: "Copiar para planilha",
+                statusReady: "Pronto",
+                statusCalculating: "Calculando…",
+                statusSaved: "Salvo automaticamente",
+                statusCopied: "Copiado para a área de transferência",
+                statusError: "Requer atenção",
+                settingsTitle: "Configurações",
+                languageLabel: "Idioma",
+                languageEnglish: "English",
+                languagePortuguese: "Português (pt-BR)",
+                themeLabel: "Tema",
+                selectTheme: "Selecionar tema",
+                themeAuto: "Auto",
+                themeLight: "Claro",
+                themeDark: "Escuro",
+                dayStartLabel: "Início do dia",
+                breakStartLabel: "Início da pausa",
+                breakEndLabel: "Fim da pausa",
+                dayEndLabel: "Fim do dia",
+                skipWeekendsLabel: "Ignorar fins de semana",
+                selectOption: "Selecionar",
+                yesOption: "Sim",
+                noOption: "Não",
+                resetButton: "Redefinir configurações",
+                designedBy: "projetado por",
+                totalWorkload: "Carga total",
+                estimatedSpan: "Duração estimada",
+                finalTime: "Horário final",
+                breakImpact: "Impacto da pausa",
+                smartNotesTitle: "Notas inteligentes do cronograma",
+                scheduleGenerated: "Cronograma gerado instantaneamente — pronto para copiar para sua planilha.",
+                noContentToCopy: "Não há conteúdo para copiar.",
+                startDateInvalid: "A data de início é inválida. Sugestão: use uma data real como May 11, 2026.",
+                startDateFormat: "A data de início deve usar dd/MM/yyyy ou MMM d, yyyy. Sugestão: tente May 11, 2026.",
+                timeFormat: "{fieldName} deve usar o formato HH:mm. Sugestão: use 08:00.",
+                emptyWorkload: "Informe pelo menos uma carga de trabalho. Sugestão: cole um número por linha, por exemplo 4, 8, 12.",
+                invalidWorkload: "Carga de trabalho inválida: \"{value}\". Use apenas números positivos. Sugestão: remova letras e use valores como 4, 8 ou 2.5.",
+                positiveWorkload: "Carga de trabalho inválida: \"{value}\". O valor deve ser maior que zero.",
+                maxWorkload: "Carga de trabalho inválida: \"{value}\". O máximo permitido é {max} horas.",
+                dayStartBeforeEnd: "O início do dia deve ser anterior ao fim do dia. Sugestão: mantenha o expediente entre 08:00 e 18:00.",
+                breakStartBeforeEnd: "O início da pausa deve ser anterior ao fim da pausa. Sugestão: use uma pausa como 12:00 até 14:00.",
+                breakInsideStart: "O início da pausa deve estar dentro do expediente. Sugestão: defina após o início do dia.",
+                breakInsideEnd: "O fim da pausa deve estar dentro do expediente. Sugestão: defina antes do fim do dia.",
+                skipWeekendsRequired: "Selecione se os fins de semana devem ser ignorados. Sugestão: escolha Sim para planejamento em dias úteis.",
+                day: "dia",
+                days: "dias",
+                breakApplied: "Pausa aplicada {count} {unit}.",
+                skippedWeekend: "{count} {unit} de fim de semana ignorado(s).",
+                workloadContinued: "A carga continuou por {count} {unit} útil(eis).",
+                timeSingular: "vez",
+                timePlural: "vezes"
+            }
+        };
+
+        function getLanguage() {
+            const language = document.getElementById("languageMode")?.value || DEFAULT_SETTINGS.languageMode;
+            return TRANSLATIONS[language] ? language : "en";
+        }
+
+        function t(key, params = {}) {
+            const dictionary = TRANSLATIONS[getLanguage()] || TRANSLATIONS.en;
+            let value = dictionary[key] || TRANSLATIONS.en[key] || key;
+
+            Object.entries(params).forEach(([name, replacement]) => {
+                value = value.replaceAll(`{${name}}`, replacement);
+            });
+
+            return value;
+        }
+
+        function applyI18n() {
+            const language = getLanguage();
+            document.documentElement.lang = language === "pt-BR" ? "pt-BR" : "en";
+
+            document.querySelectorAll("[data-i18n]").forEach(element => {
+                element.textContent = t(element.dataset.i18n);
+            });
+
+            document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
+                element.placeholder = t(element.dataset.i18nPlaceholder);
+            });
+
+            document.querySelectorAll("[data-i18n-title]").forEach(element => {
+                element.title = t(element.dataset.i18nTitle);
+            });
+
+            document.querySelectorAll("[data-i18n-aria-label]").forEach(element => {
+                element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
+            });
+
+            clearResultFeedback();
+            setAppStatus(t("statusReady"));
+        }
+
+        function flashElement(element) {
+            if (!element) return;
+
+            element.classList.remove("flash");
+            void element.offsetWidth;
+            element.classList.add("flash");
+        }
+
+        function applySettingsValues(values) {
+            SETTINGS_IDS.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element || values[id] === undefined) return;
+
+                element.value = values[id];
+            });
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+
+            // PRIMEIRO ACESSO
+            if (!saved) {
+                const initialValues = {
+                    ...DEFAULT_SETTINGS,
+                    languageMode: detectUserLanguage()
+                };
+
+                applySettingsValues(initialValues);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    version: SETTINGS_VERSION,
+                    values: initialValues
+                }));
+
+                return;
+            }
+
+            try {
+                const settings = JSON.parse(saved);
+
+                const values =
+                    settings && settings.version === SETTINGS_VERSION
+                        ? settings.values
+                        : settings;
+
+                const mergedValues = {
+                    ...DEFAULT_SETTINGS,
+                    ...values,
+                    languageMode: values?.languageMode || detectUserLanguage()
+                };
+
+                applySettingsValues(mergedValues);
+
+            } catch {
+                localStorage.removeItem(STORAGE_KEY);
+
+                // fallback seguro
+                applySettingsValues(DEFAULT_SETTINGS);
+            }
+        }
+
+        function saveSettings() {
+            const values = {};
+
+            SETTINGS_IDS.forEach(id => {
+                const element = document.getElementById(id);
+                values[id] = element.value;
+            });
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                version: SETTINGS_VERSION,
+                values
+            }));
+        }
+
+        function applyTheme() {
+            const mode = document.getElementById("themeMode").value;
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+            document.body.classList.toggle(
+                "dark",
+                mode === "dark" || (mode === "auto" && prefersDark)
+            );
+        }
+
+        function clearErrors() {
+            document.getElementById("errorMessage").textContent = "";
+            document.getElementById("successMessage").textContent = "";
+            document.getElementById("successMessage").classList.remove("visible");
+
+            document.querySelectorAll("input, textarea, select").forEach(element => {
+                element.classList.remove("error");
+                element.setAttribute("aria-invalid", "false");
+            });
+        }
+
+        function markError(id, messages, message) {
+            document.getElementById(id).classList.add("error");
+            setFieldAriaState(id, true);
+            messages.push(message);
+        }
+
+        function parseDateBR(value) {
+            const match = value.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            if (!match) return null;
+
+            const day = Number(match[1]);
+            const month = Number(match[2]) - 1;
+            const year = Number(match[3]);
+            const date = new Date(year, month, day);
+
+            if (date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) {
+                throw new Error(t("startDateInvalid"));
+            }
+
+            return { date, format: "dd/MM/yyyy" };
+        }
+
+        function parseDateMMM(value) {
+            const match = value.trim().match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{1,2}),\s(\d{4})$/);
+            if (!match) return null;
+
+            const month = MONTHS[match[1]];
+            const day = Number(match[2]);
+            const year = Number(match[3]);
+            const date = new Date(year, month, day);
+
+            if (date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) {
+                throw new Error(t("startDateInvalid"));
+            }
+
+            return { date, format: "MMM d, yyyy" };
+        }
+
+        function parseDateISO(value) {
+            const match = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (!match) return null;
+
+            const year = Number(match[1]);
+            const month = Number(match[2]) - 1;
+            const day = Number(match[3]);
+            const date = new Date(year, month, day);
+
+            if (date.getDate() !== day || date.getMonth() !== month || date.getFullYear() !== year) {
+                throw new Error(t("startDateInvalid"));
+            }
+
+            return { date, format: "YYYY-MM-DD" };
+        }
+
+        function parseDateAuto(value) {
+            const br = parseDateBR(value);
+            if (br) return br;
+
+            const mmm = parseDateMMM(value);
+            if (mmm) return mmm;
+
+            const iso = parseDateISO(value);
+            if (iso) return iso;
+
+            throw new Error(t("startDateFormat"));
+        }
+
+        function formatDateBR(date) {
+            return String(date.getDate()).padStart(2, "0") + "/" +
+                String(date.getMonth() + 1).padStart(2, "0") + "/" +
+                date.getFullYear();
+        }
+
+        function formatDateMMM(date) {
+            const months = Object.keys(MONTHS);
+
+            return months[date.getMonth()] + " " +
+                date.getDate() + ", " +
+                date.getFullYear();
+        }
+
+        function formatDateByInput(date, format) {
+            return format === "dd/MM/yyyy" ? formatDateBR(date) : formatDateMMM(date);
+        }
+
+        function parseTimeToMinutes(value, fieldName) {
+            const match = value.trim().match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+
+            if (!match) {
+                throw new Error(t("timeFormat", { fieldName }));
+            }
+
+            return Number(match[1]) * 60 + Number(match[2]);
+        }
+
+        function formatMinutesToTime(minutes) {
+            return String(Math.floor(minutes / 60)).padStart(2, "0") + ":" +
+                String(minutes % 60).padStart(2, "0");
+        }
+
+        function addDays(date, days) {
+            const copy = new Date(date);
+            copy.setDate(copy.getDate() + days);
+            return copy;
+        }
+
+        function isWeekend(date) {
+            return date.getDay() === 0 || date.getDay() === 6;
+        }
+
+        function countWeekendDaysBetween(fromDate, toDate) {
+            let count = 0;
+            let cursor = addDays(fromDate, 1);
+
+            while (cursor <= toDate) {
+                if (isWeekend(cursor)) count += 1;
+                cursor = addDays(cursor, 1);
+            }
+
+            return count;
+        }
+
+        function nextWorkingDay(date, config) {
+            let nextDate = new Date(date);
+
+            do {
+                nextDate = addDays(nextDate, 1);
+            } while (config.skipWeekends && isWeekend(nextDate));
+
+            return nextDate;
+        }
+
+        function normalizeWorkingDate(date, config) {
+            let normalizedDate = new Date(date);
+
+            while (config.skipWeekends && isWeekend(normalizedDate)) {
+                normalizedDate = addDays(normalizedDate, 1);
+            }
+
+            return normalizedDate;
+        }
+
+        function parseHourList(value) {
+            const values = value
+                .split(/[\s,;]+/)
+                .map(v => v.trim())
+                .filter(Boolean);
+
+            if (!values.length) {
+                throw new Error(t("emptyWorkload"));
+            }
+
+            return values.map(value => {
+                const normalizedValue = value.replace(",", ".");
+
+                if (!/^\d+(\.\d+)?$/.test(normalizedValue)) {
+                    throw new Error(t("invalidWorkload", { value }));
+                }
+
+                const number = Number(normalizedValue);
+
+                if (number <= 0) {
+                    throw new Error(t("positiveWorkload", { value }));
+                }
+
+                if (number > MAX_WORKLOAD_HOURS) {
+                    throw new Error(t("maxWorkload", { value, max: MAX_WORKLOAD_HOURS }));
+                }
+
+                return number;
+            });
+        }
+
+        function createFieldError(message, fields) {
+            const error = new Error(message);
+            error.fields = fields;
+            return error;
+        }
+
+        function validateConfig(config) {
+            if (config.dayStartTime >= config.dayEndTime) {
+                throw createFieldError(t("dayStartBeforeEnd"), ["dayStartTime", "dayEndTime"]);
+            }
+
+            if (config.breakStartTime >= config.breakEndTime) {
+                throw createFieldError(t("breakStartBeforeEnd"), ["breakStartTime", "breakEndTime"]);
+            }
+
+            if (config.breakStartTime < config.dayStartTime) {
+                throw createFieldError(t("breakInsideStart"), ["breakStartTime", "dayStartTime"]);
+            }
+
+            if (config.breakEndTime > config.dayEndTime) {
+                throw createFieldError(t("breakInsideEnd"), ["breakEndTime", "dayEndTime"]);
+            }
+        }
+
+
+        const EMPTY_VALUE = "–";
+        function getInsightLabels() {
+            return [
+                t("totalWorkload"),
+                t("estimatedSpan"),
+                t("finalTime"),
+                t("breakImpact")
+            ];
+        }
+
+        let statusTimeoutId;
+
+        function setAppStatus(message, state = "ready") {
+            const status = document.getElementById("appStatus");
+            if (!status) return;
+
+            status.textContent = message;
+            status.classList.toggle("busy", state === "busy");
+            status.classList.toggle("error-state", state === "error");
+        }
+
+        function setTemporaryAppStatus(message, state = "ready", fallbackKey = "statusReady") {
+            clearTimeout(statusTimeoutId);
+            setAppStatus(message, state);
+
+            statusTimeoutId = setTimeout(() => {
+                setAppStatus(t(fallbackKey));
+            }, 1800);
+        }
+
+        function setOutputLoading(isLoading) {
+            ["outputStartDates", "outputEndDates", "outputEndTimes"].forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) return;
+
+                element.classList.toggle("output-loading", isLoading);
+            });
+        }
+
+        function markResultsReady() {
+            ["outputStartDates", "outputEndDates", "outputEndTimes"].forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) return;
+
+                element.classList.remove("result-ready");
+                void element.offsetWidth;
+                element.classList.add("result-ready");
+                setTimeout(() => element.classList.remove("result-ready"), 900);
+            });
+        }
+
+        function renderMetricCards(items) {
+            document.getElementById("insights").innerHTML = items.map(([label, value]) => `
       <div class="metric-card">
         <div class="metric-label">${label}</div>
         <div class="metric-value${value === EMPTY_VALUE ? " empty-value" : ""}">${value}</div>
       </div>
     `).join("");
-  }
-
-  function setResultStatus(message, isEmpty = false) {
-    const successMessage = document.getElementById("successMessage");
-    successMessage.textContent = message || EMPTY_VALUE;
-    successMessage.classList.add("visible");
-    successMessage.classList.toggle("empty", isEmpty || !message);
-  }
-
-  function renderSmartNotes(notes = []) {
-    const panel = document.getElementById("smartPanel");
-    const content = notes.length
-      ? `<ul>${notes.map(note => `<li>${note}</li>`).join("")}</ul>`
-      : `<div class="empty-value">${EMPTY_VALUE}</div>`;
-
-    panel.innerHTML = `<strong>${t("smartNotesTitle")}</strong>${content}`;
-    panel.classList.add("visible");
-  }
-
-  function clearResultFeedback() {
-    renderMetricCards(getInsightLabels().map(label => [label, EMPTY_VALUE]));
-    renderSmartNotes();
-    setResultStatus(EMPTY_VALUE, true);
-  }
-
-  function renderInsights({ workloads, startDate, endDate, endMinute, meta }) {
-    const totalHours = workloads.reduce((sum, value) => sum + value, 0);
-    const calendarDays = Math.max(1, Math.round((endDate - startDate) / 86400000) + 1);
-    const breakImpactHours = meta.breakMinutesApplied / 60;
-
-    renderMetricCards([
-      [t("totalWorkload"), `${Number(totalHours.toFixed(2))}h`],
-      [t("estimatedSpan"), `${calendarDays} ${calendarDays === 1 ? t("day") : t("days")}`],
-      [t("finalTime"), formatMinutesToTime(endMinute)],
-      [t("breakImpact"), `+${Number(breakImpactHours.toFixed(2))}h`]
-    ]);
-
-    const notes = [];
-
-    if (meta.breaksApplied > 0) {
-      notes.push(t("breakApplied", { count: meta.breaksApplied, unit: meta.breaksApplied === 1 ? t("timeSingular") : t("timePlural") }));
-    }
-
-    if (meta.weekendsSkipped > 0) {
-      notes.push(t("skippedWeekend", { count: meta.weekendsSkipped, unit: meta.weekendsSkipped === 1 ? t("day") : t("days") }));
-    }
-
-    if (meta.daysAdvanced > 0) {
-      notes.push(t("workloadContinued", { count: meta.daysAdvanced + 1, unit: meta.daysAdvanced === 0 ? t("day") : t("days") }));
-    }
-
-    renderSmartNotes(notes);
-  }
-
-  function setFieldAriaState(id, invalid) {
-    const element = document.getElementById(id);
-    if (!element) return;
-    element.setAttribute("aria-invalid", invalid ? "true" : "false");
-  }
-
-  function calculateEnd(date, currentMinute, hours, config) {
-    let remaining = hours * 60;
-    const meta = {
-      breaksApplied: 0,
-      weekendsSkipped: 0,
-      daysAdvanced: 0,
-      breakStartTime: config.breakStartTime,
-      breakEndTime: config.breakEndTime,
-      breakMinutesApplied: 0
-    };
-
-    while (remaining > 0) {
-      if (currentMinute < config.dayStartTime) {
-        currentMinute = config.dayStartTime;
-      }
-
-      if (currentMinute >= config.breakStartTime && currentMinute < config.breakEndTime) {
-        meta.breakMinutesApplied += config.breakEndTime - currentMinute;
-        currentMinute = config.breakEndTime;
-        meta.breaksApplied += 1;
-      }
-
-      if (currentMinute >= config.dayEndTime) {
-        const previousDate = new Date(date);
-        date = nextWorkingDay(date, config);
-        meta.daysAdvanced += 1;
-        if (config.skipWeekends) {
-          meta.weekendsSkipped += countWeekendDaysBetween(previousDate, date);
-        }
-        currentMinute = config.dayStartTime;
-        continue;
-      }
-
-      let periodLimit = config.dayEndTime;
-
-      if (currentMinute < config.breakStartTime) {
-        periodLimit = config.breakStartTime;
-      }
-
-      const consumed = Math.min(remaining, periodLimit - currentMinute);
-
-      currentMinute += consumed;
-      remaining -= consumed;
-
-      if (remaining > 0 && currentMinute === config.breakStartTime) {
-        meta.breakMinutesApplied += config.breakEndTime - currentMinute;
-        currentMinute = config.breakEndTime;
-        meta.breaksApplied += 1;
-      }
-    }
-
-    return { date, minute: currentMinute, meta };
-  }
-
-  function getTextareaLines(id) {
-    return document.getElementById(id).value
-      .split("\n")
-      .map(line => line.trim())
-      .filter(Boolean);
-  }
-
-  async function writeToClipboard(text) {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      const temp = document.createElement("textarea");
-      temp.value = text;
-      temp.style.position = "fixed";
-      temp.style.left = "-9999px";
-      document.body.appendChild(temp);
-      temp.select();
-      document.execCommand("copy");
-      document.body.removeChild(temp);
-    }
-  }
-
-  async function copyTextarea(id) {
-    const textarea = document.getElementById(id);
-    const text = getTextareaLines(id).join("\n");
-
-    if (!text) {
-      document.getElementById("errorMessage").textContent = t("noContentToCopy");
-      setTemporaryAppStatus(t("statusError"), "error");
-      return;
-    }
-
-    await writeToClipboard(text);
-    document.getElementById("errorMessage").textContent = "";
-    flashElement(textarea);
-    setTemporaryAppStatus(t("statusCopied"));
-  }
-
-  async function copyAll(button) {
-    const startDates = getTextareaLines("outputStartDates");
-    const endDates = getTextareaLines("outputEndDates");
-    const endTimes = getTextareaLines("outputEndTimes");
-
-    const rowCount = Math.max(startDates.length, endDates.length, endTimes.length);
-
-    if (rowCount === 0) {
-      document.getElementById("errorMessage").textContent = t("noContentToCopy");
-      setTemporaryAppStatus(t("statusError"), "error");
-      return;
-    }
-
-    const spreadsheetText = Array.from({ length: rowCount }, (_, index) => {
-      return [
-        startDates[index] || "",
-        endDates[index] || "",
-        endTimes[index] || ""
-      ].join("\t");
-    }).join("\n");
-
-    await writeToClipboard(spreadsheetText);
-    document.getElementById("errorMessage").textContent = "";
-    flashElement(button);
-    setTemporaryAppStatus(t("statusCopied"));
-  }
-
-  function calculate(button, options = {}) {
-    clearErrors();
-    clearResultFeedback();
-    saveSettings();
-    setAppStatus(t("statusCalculating"), "busy");
-    setOutputLoading(true);
-
-    if (!options.silent && button) {
-      flashElement(button);
-    }
-
-    const messages = [];
-
-    try {
-      let startDateInfo;
-      let hours;
-      let config;
-
-      try {
-        startDateInfo = parseDateAuto(document.getElementById("startDate").value);
-      } catch (error) {
-        markError("startDate", messages, error.message);
-      }
-
-      try {
-        hours = parseHourList(document.getElementById("hourList").value);
-      } catch (error) {
-        markError("hourList", messages, error.message);
-      }
-
-      const skipWeekendsValue = document.getElementById("skipWeekends").value;
-      if (!["yes", "no"].includes(skipWeekendsValue)) {
-        markError("skipWeekends", messages, t("skipWeekendsRequired"));
-      }
-
-      config = {
-        skipWeekends: skipWeekendsValue === "yes"
-      };
-
-      [
-        ["dayStartTime", t("dayStartLabel")],
-        ["breakStartTime", t("breakStartLabel")],
-        ["breakEndTime", t("breakEndLabel")],
-        ["dayEndTime", t("dayEndLabel")]
-      ].forEach(([id, label]) => {
-        try {
-          config[id] = parseTimeToMinutes(document.getElementById(id).value, label);
-        } catch (error) {
-          markError(id, messages, error.message);
-        }
-      });
-
-      if (["dayStartTime", "breakStartTime", "breakEndTime", "dayEndTime"].every(id => config[id] !== undefined)) {
-        try {
-          validateConfig(config);
-        } catch (error) {
-          (error.fields || ["dayStartTime", "breakStartTime", "breakEndTime", "dayEndTime"]).forEach(id => {
-            markError(id, messages, error.message);
-          });
-        }
-      }
-
-      if (messages.length > 0) {
-        throw new Error(messages.join("\n"));
-      }
-
-      let currentDate = normalizeWorkingDate(startDateInfo.date, config);
-      let currentMinute = config.dayStartTime;
-
-      const startDates = [];
-      const endDates = [];
-      const endTimes = [];
-      const scheduleStartDate = new Date(currentDate);
-      const meta = {
-        breaksApplied: 0,
-        weekendsSkipped: 0,
-        daysAdvanced: 0,
-        breakStartTime: config.breakStartTime,
-        breakEndTime: config.breakEndTime,
-        breakMinutesApplied: 0
-      };
-
-      for (const workload of hours) {
-        if (currentMinute >= config.dayEndTime) {
-          const previousDate = new Date(currentDate);
-          currentDate = nextWorkingDay(currentDate, config);
-          meta.daysAdvanced += 1;
-          if (config.skipWeekends) {
-            meta.weekendsSkipped += countWeekendDaysBetween(previousDate, currentDate);
-          }
-          currentMinute = config.dayStartTime;
         }
 
-        const itemStartDate = new Date(currentDate);
-        const result = calculateEnd(currentDate, currentMinute, workload, config);
-
-        startDates.push(formatDateByInput(itemStartDate, startDateInfo.format));
-        endDates.push(formatDateByInput(result.date, startDateInfo.format));
-        endTimes.push(formatMinutesToTime(result.minute));
-
-        meta.breaksApplied += result.meta.breaksApplied;
-        meta.breakMinutesApplied += result.meta.breakMinutesApplied;
-        meta.weekendsSkipped += result.meta.weekendsSkipped;
-        meta.daysAdvanced += result.meta.daysAdvanced;
-
-        currentDate = result.date;
-        currentMinute = result.minute;
-      }
-
-      document.getElementById("outputStartDates").value = startDates.join("\n");
-      document.getElementById("outputEndDates").value = endDates.join("\n");
-      document.getElementById("outputEndTimes").value = endTimes.join("\n");
-
-      renderInsights({
-        workloads: hours,
-        startDate: scheduleStartDate,
-        endDate: currentDate,
-        endMinute: currentMinute,
-        meta
-      });
-
-      setResultStatus(t("scheduleGenerated"));
-      setOutputLoading(false);
-      markResultsReady();
-      setTemporaryAppStatus(t("statusReady"));
-
-    } catch (error) {
-      setOutputLoading(false);
-      setTemporaryAppStatus(t("statusError"), "error");
-      document.getElementById("errorMessage").textContent = error.message;
-      document.getElementById("outputStartDates").value = "";
-      document.getElementById("outputEndDates").value = "";
-      document.getElementById("outputEndTimes").value = "";
-      clearResultFeedback();
-    }
-  }
-
-  function resetSettings(button) {
-    localStorage.removeItem(STORAGE_KEY);
-    applySettingsValues(DEFAULT_SETTINGS);
-    applyI18n();
-    applyTheme();
-    saveSettings();
-    clearErrors();
-    document.getElementById("outputStartDates").value = "";
-    document.getElementById("outputEndDates").value = "";
-    document.getElementById("outputEndTimes").value = "";
-    clearResultFeedback();
-    setTemporaryAppStatus(t("statusReady"));
-    flashElement(button);
-  }
-
-
-  function debounce(callback, delay = 350) {
-    let timeoutId;
-
-    return function (...args) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => callback.apply(this, args), delay);
-    };
-  }
-
-  const debouncedAutoCalculate = debounce(() => {
-    calculate(document.getElementById("calculateButton"), { silent: true });
-  });
-
-  function bindAutoCalculate() {
-    SETTINGS_IDS.forEach(id => {
-      const element = document.getElementById(id);
-      if (!element) return;
-
-      element.addEventListener("input", debouncedAutoCalculate);
-      element.addEventListener("change", debouncedAutoCalculate);
-    });
-  }
-
-  function bindAutoSave() {
-    SETTINGS_IDS.forEach(id => {
-      const element = document.getElementById(id);
-      if (!element) return;
-
-      element.addEventListener("input", () => {
-        saveSettings();
-        setTemporaryAppStatus(t("statusSaved"));
-
-        if (id === "themeMode") {
-          applyTheme();
+        function setResultStatus(message, isEmpty = false) {
+            const successMessage = document.getElementById("successMessage");
+            successMessage.textContent = message || EMPTY_VALUE;
+            successMessage.classList.add("visible");
+            successMessage.classList.toggle("empty", isEmpty || !message);
         }
 
-        if (id === "languageMode") {
-          applyI18n();
-          calculate(document.getElementById("calculateButton"), { silent: true });
-        }
-      });
+        function renderSmartNotes(notes = []) {
+            const panel = document.getElementById("smartPanel");
+            const content = notes.length
+                ? `<ul>${notes.map(note => `<li>${note}</li>`).join("")}</ul>`
+                : `<div class="empty-value">${EMPTY_VALUE}</div>`;
 
-      element.addEventListener("change", () => {
-        saveSettings();
-        setTemporaryAppStatus(t("statusSaved"));
-
-        if (id === "themeMode") {
-          applyTheme();
+            panel.innerHTML = `<strong>${t("smartNotesTitle")}</strong>${content}`;
+            panel.classList.add("visible");
         }
 
-        if (id === "languageMode") {
-          applyI18n();
-          calculate(document.getElementById("calculateButton"), { silent: true });
+        function clearResultFeedback() {
+            renderMetricCards(getInsightLabels().map(label => [label, EMPTY_VALUE]));
+            renderSmartNotes();
+            setResultStatus(EMPTY_VALUE, true);
         }
-      });
-    });
 
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
-  }
+        function renderInsights({ workloads, startDate, endDate, endMinute, meta }) {
+            const totalHours = workloads.reduce((sum, value) => sum + value, 0);
+            const calendarDays = Math.max(1, Math.round((endDate - startDate) / 86400000) + 1);
+            const breakImpactHours = meta.breakMinutesApplied / 60;
 
-  loadSettings();
-  applyI18n();
-  applyTheme();
-  bindAutoSave();
-  bindAutoCalculate();
-  calculate(document.getElementById("calculateButton"), { silent: true });
-</script>
+            renderMetricCards([
+                [t("totalWorkload"), `${Number(totalHours.toFixed(2))}h`],
+                [t("estimatedSpan"), `${calendarDays} ${calendarDays === 1 ? t("day") : t("days")}`],
+                [t("finalTime"), formatMinutesToTime(endMinute)],
+                [t("breakImpact"), `+${Number(breakImpactHours.toFixed(2))}h`]
+            ]);
+
+            const notes = [];
+
+            if (meta.breaksApplied > 0) {
+                notes.push(t("breakApplied", { count: meta.breaksApplied, unit: meta.breaksApplied === 1 ? t("timeSingular") : t("timePlural") }));
+            }
+
+            if (meta.weekendsSkipped > 0) {
+                notes.push(t("skippedWeekend", { count: meta.weekendsSkipped, unit: meta.weekendsSkipped === 1 ? t("day") : t("days") }));
+            }
+
+            if (meta.daysAdvanced > 0) {
+                notes.push(t("workloadContinued", { count: meta.daysAdvanced + 1, unit: meta.daysAdvanced === 0 ? t("day") : t("days") }));
+            }
+
+            renderSmartNotes(notes);
+        }
+
+        function setFieldAriaState(id, invalid) {
+            const element = document.getElementById(id);
+            if (!element) return;
+            element.setAttribute("aria-invalid", invalid ? "true" : "false");
+        }
+
+        function calculateEnd(date, currentMinute, hours, config) {
+            let remaining = hours * 60;
+            const meta = {
+                breaksApplied: 0,
+                weekendsSkipped: 0,
+                daysAdvanced: 0,
+                breakStartTime: config.breakStartTime,
+                breakEndTime: config.breakEndTime,
+                breakMinutesApplied: 0
+            };
+
+            while (remaining > 0) {
+                if (currentMinute < config.dayStartTime) {
+                    currentMinute = config.dayStartTime;
+                }
+
+                if (currentMinute >= config.breakStartTime && currentMinute < config.breakEndTime) {
+                    meta.breakMinutesApplied += config.breakEndTime - currentMinute;
+                    currentMinute = config.breakEndTime;
+                    meta.breaksApplied += 1;
+                }
+
+                if (currentMinute >= config.dayEndTime) {
+                    const previousDate = new Date(date);
+                    date = nextWorkingDay(date, config);
+                    meta.daysAdvanced += 1;
+                    if (config.skipWeekends) {
+                        meta.weekendsSkipped += countWeekendDaysBetween(previousDate, date);
+                    }
+                    currentMinute = config.dayStartTime;
+                    continue;
+                }
+
+                let periodLimit = config.dayEndTime;
+
+                if (currentMinute < config.breakStartTime) {
+                    periodLimit = config.breakStartTime;
+                }
+
+                const consumed = Math.min(remaining, periodLimit - currentMinute);
+
+                currentMinute += consumed;
+                remaining -= consumed;
+
+                if (remaining > 0 && currentMinute === config.breakStartTime) {
+                    meta.breakMinutesApplied += config.breakEndTime - currentMinute;
+                    currentMinute = config.breakEndTime;
+                    meta.breaksApplied += 1;
+                }
+            }
+
+            return { date, minute: currentMinute, meta };
+        }
+
+        function formatDateISO(date) {
+            return date.getFullYear() + "-" +
+                String(date.getMonth() + 1).padStart(2, "0") + "-" +
+                String(date.getDate()).padStart(2, "0");
+        }
+
+        function convertToISODateIfDate(val) {
+            try {
+                const parsed = parseDateAuto(val);
+                if (parsed && parsed.date) {
+                    return formatDateISO(parsed.date);
+                }
+            } catch (e) {
+                // Not a valid date or parsing failed
+            }
+            return val;
+        }
+
+        function getTextareaLines(id) {
+            return document.getElementById(id).value
+                .split("\n")
+                .map(line => line.trim())
+                .filter(Boolean);
+        }
+
+        async function writeToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch {
+                const temp = document.createElement("textarea");
+                temp.value = text;
+                temp.style.position = "fixed";
+                temp.style.left = "-9999px";
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand("copy");
+                document.body.removeChild(temp);
+            }
+        }
+
+        async function copyTextarea(id) {
+            const textarea = document.getElementById(id);
+            let lines = getTextareaLines(id);
+            if (id === "outputStartDates" || id === "outputEndDates") {
+                lines = lines.map(convertToISODateIfDate);
+            }
+            const plainText = lines.join("\r\n");
+
+            if (!plainText) {
+                document.getElementById("errorMessage").textContent = t("noContentToCopy");
+                setTemporaryAppStatus(t("statusError"), "error");
+                return;
+            }
+
+            await writeToClipboard(plainText);
+            document.getElementById("errorMessage").textContent = "";
+            flashElement(textarea);
+            setTemporaryAppStatus(t("statusCopied"));
+        }
+
+        async function copyAll(button) {
+            const startDates = getTextareaLines("outputStartDates").map(convertToISODateIfDate);
+            const endDates = getTextareaLines("outputEndDates").map(convertToISODateIfDate);
+            const endTimes = getTextareaLines("outputEndTimes");
+
+            const rowCount = Math.max(startDates.length, endDates.length, endTimes.length);
+
+            if (rowCount === 0) {
+                document.getElementById("errorMessage").textContent = t("noContentToCopy");
+                setTemporaryAppStatus(t("statusError"), "error");
+                return;
+            }
+
+            const rows = Array.from({ length: rowCount }, (_, index) => {
+                return [
+                    startDates[index] || "",
+                    endDates[index] || "",
+                    endTimes[index] || ""
+                ];
+            });
+
+            const plainText = rows.map(cols => cols.join("\t")).join("\r\n");
+
+            await writeToClipboard(plainText);
+            document.getElementById("errorMessage").textContent = "";
+            flashElement(button);
+            setTemporaryAppStatus(t("statusCopied"));
+        }
+
+        function calculate(button, options = {}) {
+            clearErrors();
+            clearResultFeedback();
+            saveSettings();
+            setAppStatus(t("statusCalculating"), "busy");
+            setOutputLoading(true);
+
+            if (!options.silent && button) {
+                flashElement(button);
+            }
+
+            const messages = [];
+
+            try {
+                let startDateInfo;
+                let hours;
+                let config;
+
+                try {
+                    startDateInfo = parseDateAuto(document.getElementById("startDate").value);
+                } catch (error) {
+                    markError("startDate", messages, error.message);
+                }
+
+                try {
+                    hours = parseHourList(document.getElementById("hourList").value);
+                } catch (error) {
+                    markError("hourList", messages, error.message);
+                }
+
+                const skipWeekendsValue = document.getElementById("skipWeekends").value;
+                if (!["yes", "no"].includes(skipWeekendsValue)) {
+                    markError("skipWeekends", messages, t("skipWeekendsRequired"));
+                }
+
+                config = {
+                    skipWeekends: skipWeekendsValue === "yes"
+                };
+
+                [
+                    ["dayStartTime", t("dayStartLabel")],
+                    ["breakStartTime", t("breakStartLabel")],
+                    ["breakEndTime", t("breakEndLabel")],
+                    ["dayEndTime", t("dayEndLabel")]
+                ].forEach(([id, label]) => {
+                    try {
+                        config[id] = parseTimeToMinutes(document.getElementById(id).value, label);
+                    } catch (error) {
+                        markError(id, messages, error.message);
+                    }
+                });
+
+                if (["dayStartTime", "breakStartTime", "breakEndTime", "dayEndTime"].every(id => config[id] !== undefined)) {
+                    try {
+                        validateConfig(config);
+                    } catch (error) {
+                        (error.fields || ["dayStartTime", "breakStartTime", "breakEndTime", "dayEndTime"]).forEach(id => {
+                            markError(id, messages, error.message);
+                        });
+                    }
+                }
+
+                if (messages.length > 0) {
+                    throw new Error(messages.join("\n"));
+                }
+
+                let currentDate = normalizeWorkingDate(startDateInfo.date, config);
+                let currentMinute = config.dayStartTime;
+
+                const startDates = [];
+                const endDates = [];
+                const endTimes = [];
+                const scheduleStartDate = new Date(currentDate);
+                const meta = {
+                    breaksApplied: 0,
+                    weekendsSkipped: 0,
+                    daysAdvanced: 0,
+                    breakStartTime: config.breakStartTime,
+                    breakEndTime: config.breakEndTime,
+                    breakMinutesApplied: 0
+                };
+
+                for (const workload of hours) {
+                    if (currentMinute >= config.dayEndTime) {
+                        const previousDate = new Date(currentDate);
+                        currentDate = nextWorkingDay(currentDate, config);
+                        meta.daysAdvanced += 1;
+                        if (config.skipWeekends) {
+                            meta.weekendsSkipped += countWeekendDaysBetween(previousDate, currentDate);
+                        }
+                        currentMinute = config.dayStartTime;
+                    }
+
+                    const itemStartDate = new Date(currentDate);
+                    const result = calculateEnd(currentDate, currentMinute, workload, config);
+
+                    startDates.push(formatDateByInput(itemStartDate, startDateInfo.format));
+                    endDates.push(formatDateByInput(result.date, startDateInfo.format));
+                    endTimes.push(formatMinutesToTime(result.minute));
+
+                    meta.breaksApplied += result.meta.breaksApplied;
+                    meta.breakMinutesApplied += result.meta.breakMinutesApplied;
+                    meta.weekendsSkipped += result.meta.weekendsSkipped;
+                    meta.daysAdvanced += result.meta.daysAdvanced;
+
+                    currentDate = result.date;
+                    currentMinute = result.minute;
+                }
+
+                document.getElementById("outputStartDates").value = startDates.join("\n");
+                document.getElementById("outputEndDates").value = endDates.join("\n");
+                document.getElementById("outputEndTimes").value = endTimes.join("\n");
+
+                renderInsights({
+                    workloads: hours,
+                    startDate: scheduleStartDate,
+                    endDate: currentDate,
+                    endMinute: currentMinute,
+                    meta
+                });
+
+                setResultStatus(t("scheduleGenerated"));
+                setOutputLoading(false);
+                markResultsReady();
+                setTemporaryAppStatus(t("statusReady"));
+
+            } catch (error) {
+                setOutputLoading(false);
+                setTemporaryAppStatus(t("statusError"), "error");
+                document.getElementById("errorMessage").textContent = error.message;
+                document.getElementById("outputStartDates").value = "";
+                document.getElementById("outputEndDates").value = "";
+                document.getElementById("outputEndTimes").value = "";
+                clearResultFeedback();
+            }
+        }
+
+        function resetSettings(button) {
+            localStorage.removeItem(STORAGE_KEY);
+            applySettingsValues(DEFAULT_SETTINGS);
+            applyI18n();
+            applyTheme();
+            saveSettings();
+            clearErrors();
+            document.getElementById("outputStartDates").value = "";
+            document.getElementById("outputEndDates").value = "";
+            document.getElementById("outputEndTimes").value = "";
+            clearResultFeedback();
+            setTemporaryAppStatus(t("statusReady"));
+            flashElement(button);
+        }
+
+
+        function debounce(callback, delay = 350) {
+            let timeoutId;
+
+            return function (...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => callback.apply(this, args), delay);
+            };
+        }
+
+        const debouncedAutoCalculate = debounce(() => {
+            calculate(document.getElementById("calculateButton"), { silent: true });
+        });
+
+        function bindAutoCalculate() {
+            SETTINGS_IDS.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) return;
+
+                element.addEventListener("input", debouncedAutoCalculate);
+                element.addEventListener("change", debouncedAutoCalculate);
+            });
+        }
+
+        function bindAutoSave() {
+            SETTINGS_IDS.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) return;
+
+                element.addEventListener("input", () => {
+                    saveSettings();
+                    setTemporaryAppStatus(t("statusSaved"));
+
+                    if (id === "themeMode") {
+                        applyTheme();
+                    }
+
+                    if (id === "languageMode") {
+                        applyI18n();
+                        calculate(document.getElementById("calculateButton"), { silent: true });
+                    }
+                });
+
+                element.addEventListener("change", () => {
+                    saveSettings();
+                    setTemporaryAppStatus(t("statusSaved"));
+
+                    if (id === "themeMode") {
+                        applyTheme();
+                    }
+
+                    if (id === "languageMode") {
+                        applyI18n();
+                        calculate(document.getElementById("calculateButton"), { silent: true });
+                    }
+                });
+            });
+
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
+        }
+
+        loadSettings();
+        applyI18n();
+        applyTheme();
+        bindAutoSave();
+        bindAutoCalculate();
+        calculate(document.getElementById("calculateButton"), { silent: true });
+    </script>
 
 </body>
+
 </html>
