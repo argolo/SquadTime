@@ -111,6 +111,37 @@
             resize: vertical;
         }
 
+        .holiday-dates {
+            display: grid;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .holiday-date-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .holiday-date-value {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .holiday-date-row button {
+            margin-top: 0;
+        }
+
+        .holiday-remove-button {
+            min-width: 38px;
+            padding: 10px;
+        }
+
         button {
             margin-top: 16px;
             padding: 10px 14px;
@@ -324,7 +355,7 @@
 
         .status-grid {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 12px;
             margin: 18px 0 4px;
         }
@@ -350,6 +381,13 @@
             font-size: 22px;
             font-weight: 900;
             letter-spacing: -0.03em;
+        }
+
+        .metric-detail {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
         }
 
         .smart-panel {
@@ -483,7 +521,7 @@
                 <div class="eyebrow" data-i18n="eyebrow">SquadTime</div>
                 <h1 id="heroTitle" data-i18n="heroTitle">Plan complex workloads in seconds.</h1>
                 <p class="hero-copy" data-i18n="heroCopy">No Excel. No manual counting. No avoidable scheduling
-                    mistakes. Turn workload hours into precise start dates, end dates and end times instantly.</p>
+                    mistakes.</p>
                 <div class="trust-strip" aria-label="Privacy and performance highlights">
                     <span class="pill" data-i18n="privacyPill">No data leaves your browser</span>
                     <span class="pill" data-i18n="instantPill">Instant calculation</span>
@@ -614,6 +652,13 @@
                 </select>
             </div>
 
+            <div class="config-row">
+                <label for="holidayDateInput" data-i18n="holidayListLabel">Holidays</label>
+                <input id="holidayList" type="hidden" />
+                <input id="holidayDateInput" type="date" />
+                <div id="holidayDates" class="holiday-dates"></div>
+            </div>
+
             <div class="actions">
                 <button id="resetSettingsButton" onclick="resetSettings(this)" data-i18n="resetButton">Reset
                     settings</button>
@@ -626,7 +671,7 @@
 
     <script>
         const STORAGE_KEY = "squadTimeSettings";
-        const SETTINGS_VERSION = 4;
+        const SETTINGS_VERSION = 6;
         const MAX_WORKLOAD_HOURS = 10000;
 
         function detectUserLanguage() {
@@ -639,16 +684,30 @@
             return "en";
         }
 
+        function getNextMondayDefault() {
+            const date = new Date();
+            date.setHours(12, 0, 0, 0);
+            const daysUntilNextMonday = ((8 - date.getDay()) % 7) || 7;
+            date.setDate(date.getDate() + daysUntilNextMonday);
+
+            return date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+            });
+        }
+
         const DEFAULT_SETTINGS = {
             languageMode: detectUserLanguage(),
             themeMode: "auto",
-            startDate: "May 11, 2026",
+            startDate: getNextMondayDefault(),
             hourList: "4\n8\n12\n6\n2",
             dayStartTime: "08:00",
             breakStartTime: "12:00",
             breakEndTime: "14:00",
             dayEndTime: "18:00",
-            skipWeekends: "yes"
+            skipWeekends: "yes",
+            holidayList: ""
         };
 
         const MONTHS = {
@@ -665,7 +724,8 @@
             "breakStartTime",
             "breakEndTime",
             "dayEndTime",
-            "skipWeekends"
+            "skipWeekends",
+            "holidayList"
 
         ];
 
@@ -673,7 +733,7 @@
             en: {
                 eyebrow: "SquadTime",
                 heroTitle: "Plan complex workloads in seconds.",
-                heroCopy: "No Excel. No manual counting. No avoidable scheduling mistakes. Turn workload hours into precise start dates, end dates and end times instantly.",
+                heroCopy: "No Excel. No manual counting. No avoidable scheduling mistakes.",
                 privacyPill: "No data leaves your browser",
                 instantPill: "Instant calculation",
                 spreadsheetPill: "Spreadsheet-ready output",
@@ -705,10 +765,12 @@
                 themeLight: "Light",
                 themeDark: "Dark",
                 dayStartLabel: "Day start time",
-                breakStartLabel: "Break start time",
-                breakEndLabel: "Break end time",
+                breakStartLabel: "Break start time (optional)",
+                breakEndLabel: "Break end time (optional)",
                 dayEndLabel: "Day end time",
                 skipWeekendsLabel: "Skip weekends",
+                holidayListLabel: "Holidays",
+                removeHolidayButton: "Remove holiday",
                 selectOption: "Select",
                 yesOption: "Yes",
                 noOption: "No",
@@ -718,8 +780,9 @@
                 estimatedSpan: "Estimated span",
                 finalTime: "Final time",
                 breakImpact: "Break impact",
+                finalDeadline: "Final deadline",
                 smartNotesTitle: "Smart schedule notes",
-                scheduleGenerated: "Schedule generated instantly — ready to copy into your spreadsheet.",
+                scheduleGenerated: "Schedule generated instantly, ready to copy into your spreadsheet.",
                 noContentToCopy: "There is no content to copy.",
                 startDateInvalid: "Start date is invalid. Suggestion: use a real date like May 11, 2026.",
                 startDateFormat: "Start date must use dd/MM/yyyy or MMM d, yyyy. Suggestion: try May 11, 2026.",
@@ -732,11 +795,16 @@
                 breakStartBeforeEnd: "Break start time must be earlier than break end time. Suggestion: use a break like 12:00 to 14:00.",
                 breakInsideStart: "Break start time must be inside the working day. Suggestion: set it after the day start time.",
                 breakInsideEnd: "Break end time must be inside the working day. Suggestion: set it before the day end time.",
+                breakTimesTogether: "To use a break, fill in both break times. Leave both fields blank to schedule without a break.",
                 skipWeekendsRequired: "Select whether weekends should be skipped. Suggestion: choose Yes for business-day planning.",
+                holidayDateInvalid: "Invalid holiday date: \"{value}\". Use dd/MM/yyyy, MMM d, yyyy, or YYYY-MM-DD.",
                 day: "day",
                 days: "days",
                 breakApplied: "Break applied {count} {unit}.",
                 skippedWeekend: "Skipped {count} weekend {unit}.",
+                skippedHoliday: "Skipped {count} {unit}.",
+                holidaySingular: "holiday",
+                holidayPlural: "holidays",
                 workloadContinued: "Workload continued across {count} working {unit}.",
                 timeSingular: "time",
                 timePlural: "times"
@@ -744,7 +812,7 @@
             "pt-BR": {
                 eyebrow: "SquadTime",
                 heroTitle: "Planeje cargas complexas em segundos.",
-                heroCopy: "Sem Excel. Sem contagem manual. Sem erros evitáveis de agenda. Transforme horas de trabalho em datas de início, datas de fim e horários finais com precisão instantânea.",
+                heroCopy: "Sem Excel. Sem contagem manual. Sem erros evitáveis de agenda.",
                 privacyPill: "Nenhum dado sai do seu navegador",
                 instantPill: "Cálculo instantâneo",
                 spreadsheetPill: "Pronto para planilhas",
@@ -776,10 +844,12 @@
                 themeLight: "Claro",
                 themeDark: "Escuro",
                 dayStartLabel: "Início do dia",
-                breakStartLabel: "Início da pausa",
-                breakEndLabel: "Fim da pausa",
+                breakStartLabel: "Início da pausa (opcional)",
+                breakEndLabel: "Fim da pausa (opcional)",
                 dayEndLabel: "Fim do dia",
                 skipWeekendsLabel: "Ignorar fins de semana",
+                holidayListLabel: "Feriados",
+                removeHolidayButton: "Remover feriado",
                 selectOption: "Selecionar",
                 yesOption: "Sim",
                 noOption: "Não",
@@ -789,8 +859,9 @@
                 estimatedSpan: "Duração estimada",
                 finalTime: "Horário final",
                 breakImpact: "Impacto da pausa",
+                finalDeadline: "Prazo final",
                 smartNotesTitle: "Notas inteligentes do cronograma",
-                scheduleGenerated: "Cronograma gerado instantaneamente — pronto para copiar para sua planilha.",
+                scheduleGenerated: "Cronograma gerado instantaneamente, pronto para copiar para sua planilha.",
                 noContentToCopy: "Não há conteúdo para copiar.",
                 startDateInvalid: "A data de início é inválida. Sugestão: use uma data real como May 11, 2026.",
                 startDateFormat: "A data de início deve usar dd/MM/yyyy ou MMM d, yyyy. Sugestão: tente May 11, 2026.",
@@ -803,11 +874,16 @@
                 breakStartBeforeEnd: "O início da pausa deve ser anterior ao fim da pausa. Sugestão: use uma pausa como 12:00 até 14:00.",
                 breakInsideStart: "O início da pausa deve estar dentro do expediente. Sugestão: defina após o início do dia.",
                 breakInsideEnd: "O fim da pausa deve estar dentro do expediente. Sugestão: defina antes do fim do dia.",
+                breakTimesTogether: "Para usar uma pausa, informe os dois horários. Deixe ambos os campos vazios para gerar o cronograma sem pausa.",
                 skipWeekendsRequired: "Selecione se os fins de semana devem ser ignorados. Sugestão: escolha Sim para planejamento em dias úteis.",
+                holidayDateInvalid: "Data de feriado inválida: \"{value}\". Use dd/MM/yyyy, MMM d, yyyy ou YYYY-MM-DD.",
                 day: "dia",
                 days: "dias",
                 breakApplied: "Pausa aplicada {count} {unit}.",
                 skippedWeekend: "{count} {unit} de fim de semana ignorado(s).",
+                skippedHoliday: "{count} feriado(s) ignorado(s).",
+                holidaySingular: "feriado",
+                holidayPlural: "feriados",
                 workloadContinued: "A carga continuou por {count} {unit} útil(eis).",
                 timeSingular: "vez",
                 timePlural: "vezes"
@@ -850,6 +926,8 @@
                 element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
             });
 
+            renderHolidayInputs(document.getElementById("holidayList")?.value);
+
             clearResultFeedback();
             setAppStatus(t("statusReady"));
         }
@@ -868,6 +946,96 @@
                 if (!element || values[id] === undefined) return;
 
                 element.value = values[id];
+            });
+
+            renderHolidayInputs(values.holidayList);
+        }
+
+        function getHolidayValues(value = "") {
+            return value
+                .split(/[\n;]+/)
+                .map(item => item.trim())
+                .filter(Boolean)
+                .map(item => {
+                    try {
+                        return formatDateISO(parseDateAuto(item).date);
+                    } catch {
+                        return "";
+                    }
+                });
+        }
+
+        function syncHolidayList() {
+            const holidayList = document.getElementById("holidayList");
+            if (!holidayList) return;
+
+            holidayList.value = Array.from(document.querySelectorAll(".holiday-date-row"))
+                .map(row => row.dataset.value)
+                .filter(Boolean)
+                .join("\n");
+        }
+
+        function handleHolidayChange() {
+            syncHolidayList();
+            saveSettings();
+            setTemporaryAppStatus(t("statusSaved"));
+            debouncedAutoCalculate();
+        }
+
+        function addHolidayDate(value) {
+            const container = document.getElementById("holidayDates");
+            if (!container) return;
+
+            const row = document.createElement("div");
+            row.className = "holiday-date-row";
+            row.dataset.value = value;
+
+            const date = document.createElement("span");
+            date.className = "holiday-date-value";
+            const parsedDate = parseDateAuto(value).date;
+            date.textContent = getLanguage() === "pt-BR"
+                ? formatDateBR(parsedDate)
+                : formatDateMMM(parsedDate);
+
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "holiday-remove-button";
+            removeButton.textContent = "×";
+            removeButton.title = t("removeHolidayButton");
+            removeButton.setAttribute("aria-label", t("removeHolidayButton"));
+            removeButton.addEventListener("click", () => {
+                row.remove();
+                handleHolidayChange();
+            });
+
+            row.append(date, removeButton);
+            container.appendChild(row);
+        }
+
+        function renderHolidayInputs(value = "") {
+            const container = document.getElementById("holidayDates");
+            if (!container) return;
+
+            container.replaceChildren();
+            const dates = getHolidayValues(value);
+            dates.forEach(addHolidayDate);
+        }
+
+        function bindHolidayDateInput() {
+            const input = document.getElementById("holidayDateInput");
+            if (!input) return;
+
+            input.addEventListener("blur", () => {
+                const value = input.value;
+                if (!value) return;
+
+                const existingDates = new Set(getHolidayValues(document.getElementById("holidayList").value));
+                if (!existingDates.has(value)) {
+                    addHolidayDate(value);
+                    handleHolidayChange();
+                }
+
+                input.value = "";
             });
         }
 
@@ -1059,16 +1227,28 @@
             return date.getDay() === 0 || date.getDay() === 6;
         }
 
-        function countWeekendDaysBetween(fromDate, toDate) {
-            let count = 0;
+        function isHoliday(date, config) {
+            return config.holidays.has(formatDateISO(date));
+        }
+
+        function isNonWorkingDay(date, config) {
+            return isHoliday(date, config) || (config.skipWeekends && isWeekend(date));
+        }
+
+        function countSkippedDaysBetween(fromDate, toDate, config) {
+            const skipped = { weekends: 0, holidays: 0 };
             let cursor = addDays(fromDate, 1);
 
             while (cursor <= toDate) {
-                if (isWeekend(cursor)) count += 1;
+                if (isHoliday(cursor, config)) {
+                    skipped.holidays += 1;
+                } else if (config.skipWeekends && isWeekend(cursor)) {
+                    skipped.weekends += 1;
+                }
                 cursor = addDays(cursor, 1);
             }
 
-            return count;
+            return skipped;
         }
 
         function nextWorkingDay(date, config) {
@@ -1076,7 +1256,7 @@
 
             do {
                 nextDate = addDays(nextDate, 1);
-            } while (config.skipWeekends && isWeekend(nextDate));
+            } while (isNonWorkingDay(nextDate, config));
 
             return nextDate;
         }
@@ -1084,7 +1264,7 @@
         function normalizeWorkingDate(date, config) {
             let normalizedDate = new Date(date);
 
-            while (config.skipWeekends && isWeekend(normalizedDate)) {
+            while (isNonWorkingDay(normalizedDate, config)) {
                 normalizedDate = addDays(normalizedDate, 1);
             }
 
@@ -1122,6 +1302,24 @@
             });
         }
 
+        function parseHolidayList(value) {
+            const values = value
+                .split(/[\n;]+/)
+                .map(item => item.trim())
+                .filter(Boolean);
+            const holidays = new Set();
+
+            values.forEach(value => {
+                try {
+                    holidays.add(formatDateISO(parseDateAuto(value).date));
+                } catch {
+                    throw new Error(t("holidayDateInvalid", { value }));
+                }
+            });
+
+            return holidays;
+        }
+
         function createFieldError(message, fields) {
             const error = new Error(message);
             error.fields = fields;
@@ -1132,6 +1330,8 @@
             if (config.dayStartTime >= config.dayEndTime) {
                 throw createFieldError(t("dayStartBeforeEnd"), ["dayStartTime", "dayEndTime"]);
             }
+
+            if (!config.hasBreak) return;
 
             if (config.breakStartTime >= config.breakEndTime) {
                 throw createFieldError(t("breakStartBeforeEnd"), ["breakStartTime", "breakEndTime"]);
@@ -1153,7 +1353,8 @@
                 t("totalWorkload"),
                 t("estimatedSpan"),
                 t("finalTime"),
-                t("breakImpact")
+                t("breakImpact"),
+                t("finalDeadline")
             ];
         }
 
@@ -1199,10 +1400,11 @@
         }
 
         function renderMetricCards(items) {
-            document.getElementById("insights").innerHTML = items.map(([label, value]) => `
+            document.getElementById("insights").innerHTML = items.map(([label, value, detail = ""]) => `
       <div class="metric-card">
         <div class="metric-label">${label}</div>
         <div class="metric-value${value === EMPTY_VALUE ? " empty-value" : ""}">${value}</div>
+        ${detail ? `<div class="metric-detail">${detail}</div>` : ""}
       </div>
     `).join("");
         }
@@ -1234,12 +1436,20 @@
             const totalHours = workloads.reduce((sum, value) => sum + value, 0);
             const calendarDays = Math.max(1, Math.round((endDate - startDate) / 86400000) + 1);
             const breakImpactHours = meta.breakMinutesApplied / 60;
+            const locale = getLanguage() === "pt-BR" ? "pt-BR" : "en-US";
+            const deadlineDate = new Intl.DateTimeFormat(locale, {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            }).format(endDate);
+            const deadlineWeekday = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(endDate);
 
             renderMetricCards([
                 [t("totalWorkload"), `${Number(totalHours.toFixed(2))}h`],
                 [t("estimatedSpan"), `${calendarDays} ${calendarDays === 1 ? t("day") : t("days")}`],
                 [t("finalTime"), formatMinutesToTime(endMinute)],
-                [t("breakImpact"), `+${Number(breakImpactHours.toFixed(2))}h`]
+                [t("breakImpact"), `+${Number(breakImpactHours.toFixed(2))}h`],
+                [t("finalDeadline"), deadlineDate, `${formatMinutesToTime(endMinute)} · ${deadlineWeekday}`]
             ]);
 
             const notes = [];
@@ -1250,6 +1460,10 @@
 
             if (meta.weekendsSkipped > 0) {
                 notes.push(t("skippedWeekend", { count: meta.weekendsSkipped, unit: meta.weekendsSkipped === 1 ? t("day") : t("days") }));
+            }
+
+            if (meta.holidaysSkipped > 0) {
+                notes.push(t("skippedHoliday", { count: meta.holidaysSkipped, unit: meta.holidaysSkipped === 1 ? t("holidaySingular") : t("holidayPlural") }));
             }
 
             if (meta.daysAdvanced > 0) {
@@ -1270,6 +1484,7 @@
             const meta = {
                 breaksApplied: 0,
                 weekendsSkipped: 0,
+                holidaysSkipped: 0,
                 daysAdvanced: 0,
                 breakStartTime: config.breakStartTime,
                 breakEndTime: config.breakEndTime,
@@ -1281,7 +1496,7 @@
                     currentMinute = config.dayStartTime;
                 }
 
-                if (currentMinute >= config.breakStartTime && currentMinute < config.breakEndTime) {
+                if (config.hasBreak && currentMinute >= config.breakStartTime && currentMinute < config.breakEndTime) {
                     meta.breakMinutesApplied += config.breakEndTime - currentMinute;
                     currentMinute = config.breakEndTime;
                     meta.breaksApplied += 1;
@@ -1291,16 +1506,16 @@
                     const previousDate = new Date(date);
                     date = nextWorkingDay(date, config);
                     meta.daysAdvanced += 1;
-                    if (config.skipWeekends) {
-                        meta.weekendsSkipped += countWeekendDaysBetween(previousDate, date);
-                    }
+                    const skippedDays = countSkippedDaysBetween(previousDate, date, config);
+                    meta.weekendsSkipped += skippedDays.weekends;
+                    meta.holidaysSkipped += skippedDays.holidays;
                     currentMinute = config.dayStartTime;
                     continue;
                 }
 
                 let periodLimit = config.dayEndTime;
 
-                if (currentMinute < config.breakStartTime) {
+                if (config.hasBreak && currentMinute < config.breakStartTime) {
                     periodLimit = config.breakStartTime;
                 }
 
@@ -1309,7 +1524,7 @@
                 currentMinute += consumed;
                 remaining -= consumed;
 
-                if (remaining > 0 && currentMinute === config.breakStartTime) {
+                if (config.hasBreak && remaining > 0 && currentMinute === config.breakStartTime) {
                     meta.breakMinutesApplied += config.breakEndTime - currentMinute;
                     currentMinute = config.breakEndTime;
                     meta.breaksApplied += 1;
@@ -1344,12 +1559,57 @@
                 .filter(Boolean);
         }
 
-        async function writeToClipboard(text) {
+        function escapeClipboardHtml(value) {
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function createClipboardTable(rows) {
+            const tableRows = rows.map(cells => {
+                const tableCells = cells.map(value => `<td>${escapeClipboardHtml(value)}</td>`).join("");
+                return `<tr>${tableCells}</tr>`;
+            }).join("\n");
+
+            return `<table>\n<tbody>\n${tableRows}\n</tbody>\n</table>`;
+        }
+
+        function copyHtmlTableWithNativeClipboard(htmlText) {
+            const container = document.createElement("div");
+            container.contentEditable = "true";
+            container.setAttribute("aria-hidden", "true");
+            container.style.position = "fixed";
+            container.style.left = "-9999px";
+            container.style.top = "0";
+            container.innerHTML = htmlText;
+            document.body.appendChild(container);
+
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(container);
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            const copied = document.execCommand("copy");
+            selection.removeAllRanges();
+            document.body.removeChild(container);
+
+            return copied;
+        }
+
+        async function writeToClipboard(plainText, htmlText) {
             try {
-                await navigator.clipboard.writeText(text);
+                if (htmlText && copyHtmlTableWithNativeClipboard(htmlText)) {
+                    return;
+                }
+
+                await navigator.clipboard.writeText(plainText);
             } catch {
                 const temp = document.createElement("textarea");
-                temp.value = text;
+                temp.value = plainText;
                 temp.style.position = "fixed";
                 temp.style.left = "-9999px";
                 document.body.appendChild(temp);
@@ -1365,7 +1625,10 @@
             if (id === "outputStartDates" || id === "outputEndDates") {
                 lines = lines.map(convertToISODateIfDate);
             }
-            const plainText = lines.join("\r\n");
+            // GitHub Projects compara os rótulos de Single select literalmente.
+            // Para horários, use LF como a cópia nativa do GitHub, evitando que
+            // um carriage return faça parte do valor colado (por exemplo, "08:00\r").
+            const plainText = lines.join(id === "outputEndTimes" ? "\n" : "\r\n");
 
             if (!plainText) {
                 document.getElementById("errorMessage").textContent = t("noContentToCopy");
@@ -1373,7 +1636,7 @@
                 return;
             }
 
-            await writeToClipboard(plainText);
+            await writeToClipboard(plainText, createClipboardTable(lines.map(line => [line])));
             document.getElementById("errorMessage").textContent = "";
             flashElement(textarea);
             setTemporaryAppStatus(t("statusCopied"));
@@ -1402,7 +1665,7 @@
 
             const plainText = rows.map(cols => cols.join("\t")).join("\r\n");
 
-            await writeToClipboard(plainText);
+            await writeToClipboard(plainText, createClipboardTable(rows));
             document.getElementById("errorMessage").textContent = "";
             flashElement(button);
             setTemporaryAppStatus(t("statusCopied"));
@@ -1438,19 +1701,25 @@
                     markError("hourList", messages, error.message);
                 }
 
+                let holidays;
+                try {
+                    holidays = parseHolidayList(document.getElementById("holidayList").value);
+                } catch (error) {
+                    markError("holidayList", messages, error.message);
+                }
+
                 const skipWeekendsValue = document.getElementById("skipWeekends").value;
                 if (!["yes", "no"].includes(skipWeekendsValue)) {
                     markError("skipWeekends", messages, t("skipWeekendsRequired"));
                 }
 
                 config = {
-                    skipWeekends: skipWeekendsValue === "yes"
+                    skipWeekends: skipWeekendsValue === "yes",
+                    holidays: holidays || new Set()
                 };
 
                 [
                     ["dayStartTime", t("dayStartLabel")],
-                    ["breakStartTime", t("breakStartLabel")],
-                    ["breakEndTime", t("breakEndLabel")],
                     ["dayEndTime", t("dayEndLabel")]
                 ].forEach(([id, label]) => {
                     try {
@@ -1460,11 +1729,31 @@
                     }
                 });
 
-                if (["dayStartTime", "breakStartTime", "breakEndTime", "dayEndTime"].every(id => config[id] !== undefined)) {
+                const breakStartValue = document.getElementById("breakStartTime").value.trim();
+                const breakEndValue = document.getElementById("breakEndTime").value.trim();
+                config.hasBreak = Boolean(breakStartValue || breakEndValue);
+
+                if (config.hasBreak && (!breakStartValue || !breakEndValue)) {
+                    ["breakStartTime", "breakEndTime"].forEach(id => markError(id, messages, t("breakTimesTogether")));
+                } else if (config.hasBreak) {
+                    [
+                        ["breakStartTime", t("breakStartLabel")],
+                        ["breakEndTime", t("breakEndLabel")]
+                    ].forEach(([id, label]) => {
+                        try {
+                            config[id] = parseTimeToMinutes(document.getElementById(id).value, label);
+                        } catch (error) {
+                            markError(id, messages, error.message);
+                        }
+                    });
+                }
+
+                if (["dayStartTime", "dayEndTime"].every(id => config[id] !== undefined) &&
+                    (!config.hasBreak || ["breakStartTime", "breakEndTime"].every(id => config[id] !== undefined))) {
                     try {
                         validateConfig(config);
                     } catch (error) {
-                        (error.fields || ["dayStartTime", "breakStartTime", "breakEndTime", "dayEndTime"]).forEach(id => {
+                        (error.fields || ["dayStartTime", "dayEndTime"]).forEach(id => {
                             markError(id, messages, error.message);
                         });
                     }
@@ -1484,6 +1773,7 @@
                 const meta = {
                     breaksApplied: 0,
                     weekendsSkipped: 0,
+                    holidaysSkipped: 0,
                     daysAdvanced: 0,
                     breakStartTime: config.breakStartTime,
                     breakEndTime: config.breakEndTime,
@@ -1495,9 +1785,9 @@
                         const previousDate = new Date(currentDate);
                         currentDate = nextWorkingDay(currentDate, config);
                         meta.daysAdvanced += 1;
-                        if (config.skipWeekends) {
-                            meta.weekendsSkipped += countWeekendDaysBetween(previousDate, currentDate);
-                        }
+                        const skippedDays = countSkippedDaysBetween(previousDate, currentDate, config);
+                        meta.weekendsSkipped += skippedDays.weekends;
+                        meta.holidaysSkipped += skippedDays.holidays;
                         currentMinute = config.dayStartTime;
                     }
 
@@ -1511,6 +1801,7 @@
                     meta.breaksApplied += result.meta.breaksApplied;
                     meta.breakMinutesApplied += result.meta.breakMinutesApplied;
                     meta.weekendsSkipped += result.meta.weekendsSkipped;
+                    meta.holidaysSkipped += result.meta.holidaysSkipped;
                     meta.daysAdvanced += result.meta.daysAdvanced;
 
                     currentDate = result.date;
@@ -1626,6 +1917,7 @@
         applyTheme();
         bindAutoSave();
         bindAutoCalculate();
+        bindHolidayDateInput();
         calculate(document.getElementById("calculateButton"), { silent: true });
     </script>
 
